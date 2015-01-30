@@ -111,6 +111,9 @@ RUN ./install_amp --installdb --username=$ASTERISKUSER --password=${ASTERISK_DB_
   && amportal a reload \
   && amportal a ma refreshsignatures \
   && amportal chown
+  
+#change freepbx port from 80 to 81
+RUN sed s/0.0.0.0:80/0.0.0.0:81/ /etc/httpd/conf/httpd.con
 
 #Mod Freepbx
 RUN ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
