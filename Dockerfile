@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r
   libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3\
   libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev\
   libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev\
-  libspandsp-dev wget sox mpg123 libwww-perl php5 php5-jso
+  libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json
  
 # Getting the sources asterisk and freepbx
 RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz \
