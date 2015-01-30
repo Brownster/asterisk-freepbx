@@ -119,4 +119,7 @@ RUN ./install_amp --installdb --username=$ASTERISKUSER --password=${ASTERISK_DB_
 RUN ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
 	&& amportal restart
 
+#Make asterisk port open
+EXPOSE 5060
+
 CMD asterisk -f
