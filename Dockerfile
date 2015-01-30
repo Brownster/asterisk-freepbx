@@ -12,7 +12,6 @@ CMD ["/sbin/my_init"]
 # Creates the user under which asterisk will run
 ENV ASTERISKUSER asterisk
 ENV ASTERISKVER 11.6
-
 RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
 	&& mkdir /var/lib/asterisk && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
 	&& usermod --home /var/lib/asterisk $ASTERISKUSER
@@ -32,7 +31,7 @@ RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r
   libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3\
   libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev\
   libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev\
-  libspandsp-dev wget
+  libspandsp-dev wget sox mpg123 libwww-perl
   
 #install pear DB
 RUN pear uninstall db && pear install db-1.7.14
@@ -73,10 +72,10 @@ RUN apt-get install -y php5 php5-json \
 	&& mv phpagi-2.20/* /var/lib/asterisk/agi-bin/  \
  	&& chmod ugo+x /var/lib/asterisk/agi-bin/*.php
  	
- #necessary files and package for google tts
- # sox - google tts agi - mpg 123
-RUN apt-get install -y sox mpg123 libwww-perl  \
- 	&& cd /tmp  && wget https://github.com/downloads/zaf/asterisk-googletts/asterisk-googletts-0.6.tar.gz \
+#necessary files and package for google tts
+# sox - google tts agi - mpg 123
+WORKDIR /tmp
+RUN wget https://github.com/downloads/zaf/asterisk-googletts/asterisk-googletts-0.6.tar.gz \
 	&& tar xvzf asterisk-googletts-0.6.tar.gz \
 	&& cp asterisk-googletts-0.6/googletts.agi /var/lib/asterisk/agi-bin/
 
@@ -117,7 +116,7 @@ RUN ./install_amp --installdb --username=asteriskuser --password=${ASTERISK_DB_P
   && amportal chown
 
 #Mod Freepbx
-ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3
-amportal restart
+RUN ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
+	&& amportal restart
 
 CMD asterisk -f
