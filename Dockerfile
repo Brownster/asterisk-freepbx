@@ -32,20 +32,20 @@ RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r
   libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3\
   libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev\
   libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev\
-  libspandsp-dev 
+  libspandsp-dev wget
   
 #install pear DB
-RUN pear uninstall db
-RUN pear install db-1.7.14
+RUN pear uninstall db && pear install db-1.7.14
 
 #google voice dependencies
-RUN cd /usr/src && wget https://iksemel.googlecode.com/files/iksemel-1.4.tar.gz && tar xf iksemel-1.4.tar.gz
+WORKDIR /usr/src
+RUN wget https://iksemel.googlecode.com/files/iksemel-1.4.tar.gz && tar xf iksemel-1.4.tar.gz
 WORKDIR iksemel-*
 RUN ./configure && make && install
 
 #install Jansson
-RUN cd /usr/src/jansson && autoreconf -i
-./configure && make && make install
+WORKDIR /usr/src/jansson
+RUN autoreconf -i && ./configure && make && make install
 
 # gunzip asterisk
 RUN mkdir /tmp/asterisk
@@ -63,7 +63,7 @@ RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sound
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz && rm -f asterisk-extra-sounds-en-wav-current.tar.gz
 
 # Wideband Audio download
-wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
+RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz && rm -f asterisk-extra-sounds-en-g722-current.tar.gz
 
 #installation PHP et PHP AGI
