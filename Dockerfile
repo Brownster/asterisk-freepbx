@@ -11,11 +11,12 @@ ENV FREEPBXVER 12.0.3
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
-# Creates the user under which asterisk will run
-# grab gosu for easy step-down from root
+#Add user
 RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
 	&& mkdir /var/lib/asterisk && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
-	&& usermod --home /var/lib/asterisk $ASTERISKUSER \
+	&& usermod --home /var/lib/asterisk $ASTERISKUSER
+
+# grab gosu for easy step-down from root
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/* \
 	&& curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
 	&& chmod +x /usr/local/bin/gosu \
