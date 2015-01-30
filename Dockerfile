@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 CMD ["/sbin/my_init"]
 
 # Creates the user under which asterisk will run
-ENV ASTERISKUSER unraid
+ENV ASTERISKUSER asterisk
 ENV ASTERISKVER 11.6
 
 RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
