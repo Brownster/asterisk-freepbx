@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/* \
 
 # installation of packets needed for installation
 # Getting the sources asterisk and freepbx (unzip freepbx) and install pear DB
-RUN apt-get update && install -y build-essential linux-headers-`uname -r` openssh-server lamp-server^ apache2 mysql-server\
+RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r` openssh-server lamp-server^ apache2 mysql-server\
   mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox\
   libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3\
   libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev\
