@@ -39,8 +39,9 @@ RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/teleph
 RUN pear uninstall db && pear install db-1.7.14
 
 #google voice dependencies
-RUN wget https://iksemel.googlecode.com/files/iksemel-1.4.tar.gz && tar -xzf iksemel-1.4.tar.gz -C /usr/src/iksemel \
-	&& cd /usr/src/iksemel && ./configure && make && install
+RUN wget https://iksemel.googlecode.com/files/iksemel-1.4.tar.gz && tar -xzf iksemel-1.4.tar.gz -C /tmp/src/iksemel
+WORKDIR /tmp/src/iksemel 
+RUN ./configure && make && install
 
 #install Jansson
 #WORKDIR /usr/src/jansson
