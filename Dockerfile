@@ -40,9 +40,8 @@ RUN pear uninstall db && pear install db-1.7.14
 
 #google voice dependencies
 WORKDIR /usr/src
-RUN wget https://iksemel.googlecode.com/files/iksemel-1.4.tar.gz && tar xf iksemel-1.4.tar.gz
-WORKDIR iksemel-*
-RUN ./configure && make && install
+RUN wget https://iksemel.googlecode.com/files/iksemel-1.4.tar.gz && tar -xzf iksemel-1.4.tar.gz -C /usr/src/iksemel \
+	&& cd /usr/src/iksemel && ./configure && make && install
 
 #install Jansson
 WORKDIR /usr/src/jansson
