@@ -105,7 +105,6 @@ RUN mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localho
 
 #Install Freepbx
 #./start_asterisk start
-WORKDIR
 RUN ./install_amp --installdb --username=$ASTERISKUSER --password=${ASTERISK_DB_PW} \
   && amportal chown \
   && amportal a ma installall \
