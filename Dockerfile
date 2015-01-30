@@ -16,14 +16,11 @@ RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
 	&& mkdir /var/lib/asterisk && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
 	&& usermod --home /var/lib/asterisk $ASTERISKUSER
 
-# Getting the sources
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz
-
 # grab gosu for easy step-down from root
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/* \
 	&& curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
 	&& chmod +x /usr/local/bin/gosu \
-	&& apt-get purge -y --auto-remove curl
+	&& apt-get purge -y
 
 # installation of packets needed for installation
 RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r` openssh-server lamp-server^ apache2 mysql-server\
@@ -31,7 +28,12 @@ RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r
   libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3\
   libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev\
   libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev\
-  libspandsp-dev wget sox mpg123 libwww-perl
+  libspandsp-dev wget sox mpg123 libwww-perl php5 php5-jso
+ 
+# Getting the sources asterisk and freepbx
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz \
+	&& curl -sf -o /tmp/freepbx-12.0.3.tgz -L http://mirror.freepbx.org/freepbx-12.0.3.tgz \
+	&& tar vxfz freepbx-12.0.3.tgz
   
 #install pear DB
 RUN pear uninstall db && pear install db-1.7.14
@@ -65,7 +67,7 @@ RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sound
 RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz && rm -f asterisk-extra-sounds-en-g722-current.tar.gz
 
-#installation PHP et PHP AGI
+#installation PHP / PHP AGI
 RUN apt-get install -y php5 php5-json \
 	&& cd /tmp && wget http://sourceforge.net/projects/phpagi/files/latest/download \
 	&& tar xvzf download \
@@ -78,9 +80,6 @@ WORKDIR /tmp
 RUN wget https://github.com/downloads/zaf/asterisk-googletts/asterisk-googletts-0.6.tar.gz \
 	&& tar xvzf asterisk-googletts-0.6.tar.gz \
 	&& cp asterisk-googletts-0.6/googletts.agi /var/lib/asterisk/agi-bin/
-
-#Download and extract Freepbx
-wget http://mirror.freepbx.org/freepbx-12.0.3.tgz && tar vxfz freepbx-12.0.3.tgz
 
 #Change ownership of asterisk files
 RUN chown -R $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
@@ -108,7 +107,8 @@ RUN mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localho
 
 #Install Freepbx
 #./start_asterisk start
-RUN ./install_amp --installdb --username=asteriskuser --password=${ASTERISK_DB_PW} \
+WORKDIR
+RUN ./install_amp --installdb --username=$ASTERISKUSER --password=${ASTERISK_DB_PW} \
   && amportal chown \
   && amportal a ma installall \
   && amportal a reload \
