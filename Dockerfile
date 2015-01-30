@@ -59,18 +59,14 @@ RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sound
 	&& wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
   	&& tar xfz asterisk-extra-sounds-en-g722-current.tar.gz && rm -f asterisk-extra-sounds-en-g722-current.tar.gz
 
-#installation PHP / PHP AGI
-WORKDIR /tmp
+#installation PHP / PHP AGI, necessary files and package for google tts
+# sox - google tts agi and Change ownership of asterisk files
+WORKDIR /tmp/src
 RUN	wget http://sourceforge.net/projects/phpagi/files/latest/download \
 	&& tar xvzf download \
 	&& mv phpagi-2.20/* /var/lib/asterisk/agi-bin/  \
- 	&& chmod ugo+x /var/lib/asterisk/agi-bin/*.php
- 	
-#necessary files and package for google tts
-# sox - google tts agi
-#Change ownership of asterisk files
-WORKDIR /tmp
-RUN wget https://github.com/downloads/zaf/asterisk-googletts/asterisk-googletts-0.6.tar.gz \
+ 	&& chmod ugo+x /var/lib/asterisk/agi-bin/*.php \
+	&& wget https://github.com/downloads/zaf/asterisk-googletts/asterisk-googletts-0.6.tar.gz \
 	&& tar xvzf asterisk-googletts-0.6.tar.gz \
 	&& cp asterisk-googletts-0.6/googletts.agi /var/lib/asterisk/agi-bin/ \
 	&& chown -R $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
