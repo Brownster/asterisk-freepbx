@@ -32,7 +32,7 @@ WORKDIR /tmp
 RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz \
 	&& curl -sf -o /tmp/freepbx-$FREEPBXVER.tgz -L http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
 	&& tar vxfz /tmp/freepbx-$FREEPBXVER.tgz \
-	&& pear uninstall db && pear install db-1.7.14
+RUN pear uninstall db && pear install db-1.7.14
 
 #google voice dependencies - may not be needed
 #RUN wget https://iksemel.googlecode.com/files/iksemel-1.4.tar.gz && tar -xzf iksemel-1.4.tar.gz -C /tmp/src/iksemel
