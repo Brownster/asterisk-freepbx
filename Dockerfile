@@ -27,8 +27,8 @@ RUN apt-get install -y build-essential linux-headers-`uname -r` openssh-server l
   libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3\
   libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev\
   libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev\
-  libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev \
-  	&& curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz \
+  libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz \
 	&& curl -sf -o /tmp/freepbx-$FREEPBXVER.tgz -L http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
 	&& tar vxfz /tmp/freepbx-$FREEPBXVER.tgz \
 	&& pear uninstall db && pear install db-1.7.14
