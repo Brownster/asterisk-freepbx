@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r
 # Getting the sources asterisk and freepbx
 RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz \
 	&& curl -sf -o /tmp/freepbx-12.0.3.tgz -L http://mirror.freepbx.org/freepbx-12.0.3.tgz \
-	&& tar vxfz freepbx-12.0.3.tgz
+	&& tar vxfz /tmp/freepbx-12.0.3.tgz
   
 #install pear DB
 RUN pear uninstall db && pear install db-1.7.14
