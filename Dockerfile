@@ -12,6 +12,7 @@ CMD ["/sbin/my_init"]
 # Creates the user under which asterisk will run
 ENV ASTERISKUSER asterisk
 ENV ASTERISKVER 11.6
+ENV FREEPBXVER 12.0.3
 RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
 	&& mkdir /var/lib/asterisk && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
 	&& usermod --home /var/lib/asterisk $ASTERISKUSER
@@ -23,7 +24,7 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/* \
 	&& apt-get purge -y
 
 # installation of packets needed for installation
-RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r` openssh-server lamp-server^ apache2 mysql-server\
+RUN apt-get install -y build-essential linux-headers-`uname -r` openssh-server lamp-server^ apache2 mysql-server\
   mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox\
   libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3\
   libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev\
@@ -32,16 +33,17 @@ RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r
  
 # Getting the sources asterisk and freepbx
 RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz \
-	&& curl -sf -o /tmp/freepbx-12.0.3.tgz -L http://mirror.freepbx.org/freepbx-12.0.3.tgz \
-	&& tar vxfz /tmp/freepbx-12.0.3.tgz
+	&& curl -sf -o /tmp/freepbx-$FREEPBXVER.tgz -L http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
+	&& tar vxfz /tmp/freepbx-$FREEPBXVER.tgz
   
 #install pear DB
 RUN pear uninstall db && pear install db-1.7.14
 
 #google voice dependencies
-RUN wget https://iksemel.googlecode.com/files/iksemel-1.4.tar.gz && tar -xzf iksemel-1.4.tar.gz -C /tmp/src/iksemel
-WORKDIR /tmp/src/iksemel 
-RUN ./configure && make && install
+RUN apt-get -y install libiksemel-dev
+#RUN wget https://iksemel.googlecode.com/files/iksemel-1.4.tar.gz && tar -xzf iksemel-1.4.tar.gz -C /tmp/src/iksemel
+#WORKDIR /tmp/src/iksemel 
+#RUN ./configure && make && install
 
 #install Jansson
 #WORKDIR /usr/src/jansson
@@ -97,15 +99,15 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
 RUN export ASTERISK_DB_PW=`dd if=/dev/urandom bs=1 count=32 2>/dev/null | base64 - | cut -c2-18`
 
 #Configure MySql database
-RUN mysqladmin -u root create asterisk && mysqladmin -u root create asteriskcdrdb
-
 #Set MySql Permissions
-RUN mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
+RUN mysqladmin -u root create asterisk && mysqladmin -u root create asteriskcdrdb \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
   && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
   && mysql -u root -e "flush privileges;"
 
 #Install Freepbx
 #./start_asterisk start
+WORKDIR /tmp/freepbx-$FREEPBXVER
 RUN ./install_amp --installdb --username=$ASTERISKUSER --password=${ASTERISK_DB_PW} \
   && amportal chown \
   && amportal a ma installall \
