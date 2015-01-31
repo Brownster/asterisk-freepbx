@@ -70,6 +70,16 @@ RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sound
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-g722-current.tar.gz
+  
+#installation PHP / PHP AGI, necessary files and package for google tts
+#RUN wget http://sourceforge.net/projects/phpagi/files/latest/download \
+#	&& tar xvzf download \
+#	&& mv phpagi-2.20/* /var/lib/asterisk/agi-bin/  \
+# 	&& chmod ugo+x /var/lib/asterisk/agi-bin/*.php \
+#	&& wget https://github.com/downloads/zaf/asterisk-googletts/asterisk-googletts-0.6.tar.gz \
+#	&& tar xvzf asterisk-googletts-0.6.tar.gz \
+#	&& cp asterisk-googletts-0.6/googletts.agi /var/lib/asterisk/agi-bin/
+
 
 #set permissions
 RUN chown $ASRERISKUSER. /var/run/asterisk \
