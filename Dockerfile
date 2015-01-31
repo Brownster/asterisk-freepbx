@@ -54,7 +54,7 @@ RUN autoreconf -i \
 #Build asterisk
 WORKDIR /temp/src
 RUN tar xvfz asterisk-$ASTERISKVER-current.tar.gz  \
-  && cd asterisk-$ASTERISKVER-current \
+  && cd asterisk-* \
   && ./configure \
   && contrib/scripts/get_mp3_source.sh \
   && make menuselect.makeopts \
