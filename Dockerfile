@@ -55,7 +55,7 @@ WORKDIR /temp/src
 ENV rebuild_date 2015-01-31
 # Extract Configure
 RUN tar xvfz asterisk-$ASTERISKVER-current.tar.gz \
-  && cd /tmp/asterisk-12.8.1 \
+  && cd asterisk-12.8.1 \
   && ./configure --libdir=/usr/lib64 1> /dev/null \
 # RUN contrib/scripts/get_mp3_source.sh \
 # Remove the native build option
