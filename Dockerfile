@@ -6,6 +6,7 @@ MAINTAINER marc brown <marc@22walker.co.uk>
 ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
 ENV ASTERISKUSER asterisk
+ENV ASTERISKVER 12
 ENV FREEPBXVER 12.0.3
 ENV ASTERISK_DB_PW hgftffjgjygfy67r457reew64
 # Use baseimage-docker's init system.
@@ -30,18 +31,20 @@ RUN pear uninstall db && pear install db-1.7.14
 
 #Get Asterisk, Jansson, pj project and freepbx
 WORKDIR /temp/src
-RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-12-current.tar.gz \
+RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISKVER-current.tar.gz \
   && git clone https://github.com/akheron/jansson.git \
   && git clone https://github.com/asterisk/pjproject.git \
-  && wget http://mirror.freepbx.org/freepbx-12.0.3.tgz \
-  && tar vxfz freepbx-12.0.3.tgz
+  && wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
+  && tar vxfz freepbx-$FREEPBXVER.tgz.tgz
 
+#build pj project
 WORKDIR /temp/src/pjproject
 RUN ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr \
   && make dep \
   && make \
   && make install
 
+#build jansson
 WORKDIR /temp/src/jansson
 RUN autoreconf -i \
   && ./configure \
@@ -50,7 +53,7 @@ RUN autoreconf -i \
 
 #Build asterisk
 WORKDIR /temp/src
-RUN tar xvfz asterisk-12-current.tar.gz \
+RUN tar xvfz asterisk-$ASTERISKVER-current.tar.gz \
   && cd asterisk-* \
   && ./configure \
   && contrib/scripts/get_mp3_source.sh \
@@ -93,6 +96,7 @@ mysql -u root -e "flush privileges;"
 #install free pbx
 # WORKDIR /tmp/src
 # RUN ./start_asterisk start
+WORKDIR /tmp/src/freepbx-$FREEPBXVER
 RUN ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
   && amportal chown \
   && amportal a ma installall \
