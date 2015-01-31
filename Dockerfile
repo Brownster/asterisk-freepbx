@@ -97,13 +97,12 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && service apache2 restart
 
 #Setup mysql
-RUN mysqladmin -u root create asterisk \
-  && mysqladmin -u root create asteriskcdrdb
-
-#set permissions
-mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';"
-mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';"
-mysql -u root -e "flush privileges;"
+RUN /etc/init.d/mysql start \
+  && mysqladmin -u root create asterisk \
+  && mysqladmin -u root create asteriskcdrdb \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
+  && mysql -u root -e "flush privileges;"
 
 #install free pbx
 # WORKDIR /tmp/src
