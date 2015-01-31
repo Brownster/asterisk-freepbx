@@ -44,3 +44,69 @@ RUN ./configure --enable-shared --disable-sound --disable-resample --disable-vid
   && make dep \
   && make \
   && make install
+
+WORKDIR /temp/src/jansson
+RUN autoreconf -i \
+  && ./configure \
+  && make \
+  && make install
+
+#Build asterisk
+WORKDIR /temp/src
+RUN tar xvfz asterisk-12-current.tar.gz \
+  && cd asterisk-* \
+  && ./configure \
+  && contrib/scripts/get_mp3_source.sh && make menuselect.makeopts \
+  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
+  && make && make install && make config
+
+#Extra sounds
+# Wideband Audio download
+WORKDIR /var/lib/asterisk/sounds
+RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
+  && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
+  && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
+  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
+  && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
+  && rm -f asterisk-extra-sounds-en-g722-current.tar.gz
+
+#set permissions
+RUN chown $ASRERISKUSER. /var/run/asterisk \
+  && chown -R $ASTERISKUSER. /etc/asterisk \
+  && chown -R $ASTERISKUSER. /var/{lib,log,spool}/asterisk \
+  && chown -R $ASTERISKUSER. /usr/lib/asterisk \
+  && rm -rf /var/www/html
+
+
+#mod to apache
+RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
+  && cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf_orig \
+  && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
+  && service apache2 restart
+
+
+#Setup mysql
+RUN mysqladmin -u root create asterisk \
+  && mysqladmin -u root create asteriskcdrdb
+
+#set permissions
+mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';"
+mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';"
+mysql -u root -e "flush privileges;"
+
+#install free pbx
+# WORKDIR /tmp/src
+# RUN ./start_asterisk start
+RUN ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
+  && amportal chown \
+  && amportal a ma installall \
+  && amportal a reload \
+  && amportal a ma refreshsignatures \
+  && amportal chown 
+
+RUN ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
+  && amportal restart
+
+EXPOSE 5060
+
+CMD asterisk -f
