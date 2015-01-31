@@ -84,7 +84,9 @@ RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sound
 #set permissions
 RUN chown $ASRERISKUSER. /var/run/asterisk \
   && chown -R $ASTERISKUSER. /etc/asterisk \
-  && chown -R $ASTERISKUSER. /var/{lib,log,spool}/asterisk \
+  && chown -R $ASTERISKUSER. /var/lib/asterisk \
+  && chown -R $ASTERISKUSER. /var/log/asterisk \
+  && chown -R $ASTERISKUSER. /var/spool/asterisk \
   && chown -R $ASTERISKUSER. /usr/lib/asterisk \
   && rm -rf /var/www/html
 
@@ -105,9 +107,9 @@ mysql -u root -e "flush privileges;"
 
 #install free pbx
 # WORKDIR /tmp/src
-# RUN ./start_asterisk start
 WORKDIR /tmp/src/freepbx-$FREEPBXVER
-RUN ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
+RUN ./start_asterisk start \
+  && ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
   && amportal chown \
   && amportal a ma installall \
   && amportal a reload \
