@@ -102,11 +102,11 @@ RUN /etc/init.d/mysql start \
   && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
   && mysql -u root -e "flush privileges;"
 
-#install free pbx
+#install free pbx and required mod to moh
 WORKDIR /tmp/src
 RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && tar vxfz freepbx-$FREEPBXVER.tgz \
-  && cd /tmp/src/freepbx
+  && cd /tmp/src/freepbx \
   && ./start_asterisk start \
   && ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
   && amportal chown \
@@ -114,8 +114,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && amportal a reload \
   && amportal a ma refreshsignatures \
   && amportal chown 
-
-RUN ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
+  && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && amportal restart
 
 EXPOSE 5060
