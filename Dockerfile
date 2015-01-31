@@ -30,22 +30,24 @@ RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
 RUN pear uninstall db && pear install db-1.7.14
 
 #build pj project
-WORKDIR /temp/src/pjproject
+#build jansson
+WORKDIR /temp/src/
 RUN git clone https://github.com/asterisk/pjproject.git \
+  && git clone https://github.com/akheron/jansson.git \
+  && cd /emp/src/pjproject \
   && ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr \
   && make dep \
   && make \
-  && make install
-
-#build jansson
-WORKDIR /temp/src/jansson
-RUN git clone https://github.com/akheron/jansson.git \
+  && make install \
+  && cd /temp/src/jansson \
   && autoreconf -i \
   && ./configure \
   && make \
   && make install
   
 # make asterisk.
+#Extra sounds
+# Wideband Audio downloa
 WORKDIR /temp/src
 ENV rebuild_date 2015-01-31
 # Extract Configure
@@ -59,13 +61,10 @@ RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISK
   && -i "s/BUILD_NATIVE//" menuselect.makeopts \
 # Continue with a standard make.
   && make 1> /dev/null \
-  && make install 1> /dev/null
-  && make config
-
-#Extra sounds
-# Wideband Audio download
-WORKDIR /var/lib/asterisk/sounds
-RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
+  && make install 1> /dev/null \
+  && make config \
+  && cd /var/lib/asterisk/sounds \
+  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
