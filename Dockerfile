@@ -34,7 +34,7 @@ RUN pear uninstall db && pear install db-1.7.14
 WORKDIR /temp/src/
 RUN git clone https://github.com/asterisk/pjproject.git \
   && git clone https://github.com/akheron/jansson.git \
-  && cd /emp/src/pjproject \
+  && cd /temp/src/pjproject \
   && ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr \
   && make dep \
   && make \
