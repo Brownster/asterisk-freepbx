@@ -35,7 +35,7 @@ RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISK
   && git clone https://github.com/akheron/jansson.git \
   && git clone https://github.com/asterisk/pjproject.git \
   && wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
-  && tar vxfz freepbx-$FREEPBXVER.tgz.tgz
+  && tar vxfz freepbx-$FREEPBXVER.tgz
 
 #build pj project
 WORKDIR /temp/src/pjproject
