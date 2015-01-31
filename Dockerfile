@@ -9,6 +9,7 @@ ENV ASTERISKUSER asterisk
 ENV ASTERISKVER 12
 ENV FREEPBXVER 12.0.3
 ENV ASTERISK_DB_PW hgftffjgjygfy67r457reew64
+ENV AUTOBUILD_UNIXTIME 1418234402
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
@@ -48,16 +49,32 @@ RUN autoreconf -i \
   && ./configure \
   && make \
   && make install
-
-#Build asterisk
+  
+# make asterisk.
 WORKDIR /temp/src
+ENV rebuild_date 2015-01-31
+# Extract Configure
 RUN tar xvfz asterisk-$ASTERISKVER-current.tar.gz  \
   && cd asterisk-12.8.1 \
-  && ./configure \
-  && contrib/scripts/get_mp3_source.sh \
-  && make menuselect.makeopts \
-  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
-  && make && make install && make config
+RUN ./configure --libdir=/usr/lib64 1> /dev/null
+RUN contrib/scripts/get_mp3_source.sh \
+# Remove the native build option
+RUN make menuselect.makeopts
+RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
+# Continue with a standard make.
+RUN make 1> /dev/null
+RUN make install 1> /dev/null
+WORKDIR /
+
+#Build asterisk
+# WORKDIR /temp/src
+# RUN tar xvfz asterisk-$ASTERISKVER-current.tar.gz  \
+#   && cd asterisk-12.8.1 \
+#  && ./configure \
+#  && contrib/scripts/get_mp3_source.sh \
+#  && make menuselect.makeopts \
+#  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
+#  && make && make install && make config
 
 #Extra sounds
 # Wideband Audio download
