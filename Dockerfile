@@ -54,17 +54,15 @@ RUN autoreconf -i \
 WORKDIR /temp/src
 ENV rebuild_date 2015-01-31
 # Extract Configure
-RUN tar xvfz asterisk-$ASTERISKVER-current.tar.gz -C /tmp/asterisk --strip-components=1
-WORKDIR /tmp/asterisk
-RUN ./configure --libdir=/usr/lib64 1> /dev/null
+RUN tar xvfz asterisk-$ASTERISKVER-current.tar.gz -C /tmp/asterisk --strip-components=1 \
+  && cd /tmp/asterisk \
+  && ./configure --libdir=/usr/lib64 1> /dev/null \
 # RUN contrib/scripts/get_mp3_source.sh \
 # Remove the native build option
-RUN make menuselect.makeopts
-RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
+  && -i "s/BUILD_NATIVE//" menuselect.makeopts \
 # Continue with a standard make.
-RUN make 1> /dev/null
-RUN make install 1> /dev/null
-WORKDIR /
+  && make 1> /dev/null \
+  && make install 1> /dev/null
 
 #Build asterisk
 # WORKDIR /temp/src
