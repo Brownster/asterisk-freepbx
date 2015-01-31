@@ -13,26 +13,25 @@ ENV AUTOBUILD_UNIXTIME 1418234402
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
-#Add user
-RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
-	&& mkdir /var/lib/asterisk && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
-	&& usermod --home /var/lib/asterisk $ASTERISKUSER
-
-# grab gosu for easy step-down from root
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/* \
-	&& curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
-	&& chmod +x /usr/local/bin/gosu \
-	&& apt-get purge -y
-
 #Install packets that are needed
-RUN apt-get update && apt-get install -y build-essential libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^
+RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^
+
+#Add user
+# grab gosu for easy step-down from root
+RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
+  && mkdir /var/lib/asterisk && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
+  && usermod --home /var/lib/asterisk $ASTERISKUSER \
+  && rm -rf /var/lib/apt/lists/* \
+  && curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
+  && chmod +x /usr/local/bin/gosu \
+  && apt-get purge -y
 
 #Install Pear DB
 RUN pear uninstall db && pear install db-1.7.14
 
 #Get Asterisk, Jansson, pj project and freepbx
 WORKDIR /temp/src
-RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISKVER-current.tar.gz \
+ \
   && git clone https://github.com/akheron/jansson.git \
   && git clone https://github.com/asterisk/pjproject.git
 
@@ -54,25 +53,18 @@ RUN autoreconf -i \
 WORKDIR /temp/src
 ENV rebuild_date 2015-01-31
 # Extract Configure
-RUN tar xvfz asterisk-$ASTERISKVER-current.tar.gz \
+RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISKVER-current.tar.gz \
+  && tar xvfz asterisk-$ASTERISKVER-current.tar.gz \
   && cd asterisk-12.8.1 \
   && ./configure --libdir=/usr/lib64 1> /dev/null \
-# RUN contrib/scripts/get_mp3_source.sh \
+  && ./contrib/scripts/get_mp3_source.sh \
+  && make menuselect.makeopts \
 # Remove the native build option
   && -i "s/BUILD_NATIVE//" menuselect.makeopts \
 # Continue with a standard make.
   && make 1> /dev/null \
   && make install 1> /dev/null
-
-#Build asterisk
-# WORKDIR /temp/src
-# RUN tar xvfz asterisk-$ASTERISKVER-current.tar.gz  \
-#   && cd asterisk-12.8.1 \
-#  && ./configure \
-#  && contrib/scripts/get_mp3_source.sh \
-#  && make menuselect.makeopts \
-#  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
-#  && make && make install && make config
+  && make config
 
 #Extra sounds
 # Wideband Audio download
@@ -84,16 +76,6 @@ RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sound
   && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-g722-current.tar.gz
   
-#installation PHP / PHP AGI, necessary files and package for google tts
-#RUN wget http://sourceforge.net/projects/phpagi/files/latest/download \
-#	&& tar xvzf download \
-#	&& mv phpagi-2.20/* /var/lib/asterisk/agi-bin/  \
-# 	&& chmod ugo+x /var/lib/asterisk/agi-bin/*.php \
-#	&& wget https://github.com/downloads/zaf/asterisk-googletts/asterisk-googletts-0.6.tar.gz \
-#	&& tar xvzf asterisk-googletts-0.6.tar.gz \
-#	&& cp asterisk-googletts-0.6/googletts.agi /var/lib/asterisk/agi-bin/
-
-
 #set permissions
 RUN chown $ASRERISKUSER. /var/run/asterisk \
   && chown -R $ASTERISKUSER. /etc/asterisk \
