@@ -47,7 +47,8 @@ RUN git clone https://github.com/asterisk/pjproject.git \
   
 # make asterisk.
 #Extra sounds
-# Wideband Audio downloa
+#Wideband Audio download
+#set permissions
 WORKDIR /temp/src
 ENV rebuild_date 2015-01-31
 # Extract Configure
@@ -69,10 +70,8 @@ RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISK
   && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
-  && rm -f asterisk-extra-sounds-en-g722-current.tar.gz
-  
-#set permissions
-RUN chown $ASRERISKUSER. /var/run/asterisk \
+  && rm -f asterisk-extra-sounds-en-g722-current.tar.gz \
+  && chown $ASRERISKUSER. /var/run/asterisk \
   && chown -R $ASTERISKUSER. /etc/asterisk \
   && chown -R $ASTERISKUSER. /var/lib/asterisk \
   && chown -R $ASTERISKUSER. /var/log/asterisk \
