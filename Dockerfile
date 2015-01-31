@@ -105,10 +105,10 @@ RUN /etc/init.d/mysql start \
 #install free pbx
 WORKDIR /tmp/src
 RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
-  && tar vxfz freepbx-$FREEPBXVER.tgz
-WORKDIR /tmp/src/freepbx
-#RUN ./start_asterisk start \
-RUN ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
+  && tar vxfz freepbx-$FREEPBXVER.tgz \
+  && /tmp/src/freepbx
+  && ./start_asterisk start \
+  && ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
   && amportal chown \
   && amportal a ma installall \
   && amportal a reload \
