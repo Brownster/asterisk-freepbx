@@ -33,9 +33,7 @@ RUN pear uninstall db && pear install db-1.7.14
 WORKDIR /temp/src
 RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISKVER-current.tar.gz \
   && git clone https://github.com/akheron/jansson.git \
-  && git clone https://github.com/asterisk/pjproject.git \
-  && wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
-  && tar vxfz freepbx-$FREEPBXVER.tgz
+  && git clone https://github.com/asterisk/pjproject.git
 
 #build pj project
 WORKDIR /temp/src/pjproject
@@ -105,7 +103,9 @@ RUN /etc/init.d/mysql start \
   && mysql -u root -e "flush privileges;"
 
 #install free pbx
-# WORKDIR /tmp/src
+WORKDIR /tmp/src
+RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
+  && tar vxfz freepbx-$FREEPBXVER.tgz
 WORKDIR /tmp/src/freepbx
 #RUN ./start_asterisk start \
 RUN ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
