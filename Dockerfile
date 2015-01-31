@@ -6,7 +6,6 @@ MAINTAINER marc brown <marc@22walker.co.uk>
 ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
 ENV ASTERISKUSER asterisk
-ENV ASTERISKVER 12
 ENV FREEPBXVER 12.0.3
 ENV ASTERISK_DB_PW hgftffjgjygfy67r457reew64
 # Use baseimage-docker's init system.
@@ -77,13 +76,11 @@ RUN chown $ASRERISKUSER. /var/run/asterisk \
   && chown -R $ASTERISKUSER. /usr/lib/asterisk \
   && rm -rf /var/www/html
 
-
 #mod to apache
 RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf_orig \
   && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
   && service apache2 restart
-
 
 #Setup mysql
 RUN mysqladmin -u root create asterisk \
