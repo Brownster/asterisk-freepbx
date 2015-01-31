@@ -28,11 +28,9 @@ RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r
 #Install Pear DB
 RUN pear uninstall db && pear install db-1.7.14
 
-#Get Asterisk
+#Get Asterisk, Jansson, pj project and freepbx
 WORKDIR /temp/src
-RUN wget http://downloads.asterisk.org/pub/telephony/dahdi-linux-complete/dahdi-linux-complete-current.tar.gz \
-  && wget http://downloads.asterisk.org/pub/telephony/libpri/libpri-1.4-current.tar.gz \
-  && wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-12-current.tar.gz \
+RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-12-current.tar.gz \
   && git clone https://github.com/akheron/jansson.git \
   && git clone https://github.com/asterisk/pjproject.git \
   && wget http://mirror.freepbx.org/freepbx-12.0.3.tgz \
@@ -55,7 +53,8 @@ WORKDIR /temp/src
 RUN tar xvfz asterisk-12-current.tar.gz \
   && cd asterisk-* \
   && ./configure \
-  && contrib/scripts/get_mp3_source.sh && make menuselect.makeopts \
+  && contrib/scripts/get_mp3_source.sh \
+  && make menuselect.makeopts \
   && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
   && make && make install && make config
 
