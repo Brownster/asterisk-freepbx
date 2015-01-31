@@ -29,22 +29,18 @@ RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
 #Install Pear DB
 RUN pear uninstall db && pear install db-1.7.14
 
-#Get Asterisk, Jansson, pj project and freepbx
-WORKDIR /temp/src
- \
-  && git clone https://github.com/akheron/jansson.git \
-  && git clone https://github.com/asterisk/pjproject.git
-
 #build pj project
 WORKDIR /temp/src/pjproject
-RUN ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr \
+RUN git clone https://github.com/asterisk/pjproject.git \
+  && ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr \
   && make dep \
   && make \
   && make install
 
 #build jansson
 WORKDIR /temp/src/jansson
-RUN autoreconf -i \
+RUN git clone https://github.com/akheron/jansson.git \
+  && autoreconf -i \
   && ./configure \
   && make \
   && make install
@@ -86,13 +82,12 @@ RUN chown $ASRERISKUSER. /var/run/asterisk \
   && rm -rf /var/www/html
 
 #mod to apache
+#Setup mysql
 RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf_orig \
   && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
-  && service apache2 restart
-
-#Setup mysql
-RUN /etc/init.d/mysql start \
+  && service apache2 restart \
+  && /etc/init.d/mysql start \
   && mysqladmin -u root create asterisk \
   && mysqladmin -u root create asteriskcdrdb \
   && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
