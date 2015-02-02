@@ -57,9 +57,9 @@ RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/teleph
   && make menuselect.makeopts \
   && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
 # Continue with a standard make.
-  && make 1> /dev/null
-  && make install 1> /dev/null
-  && make config 1> /dev/null
+  && make 1> /dev/null \
+  && make install 1> /dev/null \
+  && make config 1> /dev/null \
   && ldconfig \
 # get extra sounds
   && cd/var/lib/asterisk/sounds \
