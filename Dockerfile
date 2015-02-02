@@ -64,12 +64,13 @@ WORKDIR /tmp/asterisk
 RUN ./configure --libdir=/usr/lib64 1> /dev/null
 # Remove the native build option
 RUN make menuselect.makeopts
-RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
+# RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
 # Continue with a standard make.
 RUN make 1> /dev/null
-RUN make install 1> /dev/null
-RUN make samples 1> /dev/null
-WORKDIR /
+RUN make install
+#RUN make install 1> /dev/null
+#RUN make samples 1> /dev/null
+RUN make samples
   
 
  RUN cd /var/lib/asterisk/sounds \
