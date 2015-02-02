@@ -62,7 +62,7 @@ RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/teleph
   && make config 1> /dev/null \
   && ldconfig \
 # get extra sounds
-  && cd/var/lib/asterisk/sounds \
+  && cd /var/lib/asterisk/sounds \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
