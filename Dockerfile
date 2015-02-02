@@ -52,19 +52,24 @@ RUN git clone https://github.com/asterisk/pjproject.git \
 WORKDIR /temp/src
 ENV rebuild_date 2015-01-31
 # Extract Configure
-RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISKVER-current.tar.gz \
-  && tar xvfz asterisk-$ASTERISKVER-current.tar.gz \
-  && cd asterisk-12.8.1 \
-  && ./configure --libdir=/usr/lib64 1> /dev/null \
-  && contrib/scripts/get_mp3_source.sh \
-  && make menuselect.makeopts \
+# make asterisk.
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISKVER-current.tar.gz
+ENV rebuild_date 2015-01-29
+
+# gunzip asterisk
+RUN mkdir /tmp/asterisk
+RUN tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1
+WORKDIR /tmp/asterisk
+# Configure
+RUN ./configure --libdir=/usr/lib64 1> /dev/null
 # Remove the native build option
-  && -i "s/BUILD_NATIVE//" menuselect.makeopts \
+RUN make menuselect.makeopts
+RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
 # Continue with a standard make.
-  && make 1> /dev/null \
-  && make install 1> /dev/null \
-  && make config \
-  && ldconfig
+RUN make 1> /dev/null
+RUN make install 1> /dev/null
+RUN make samples 1> /dev/null
+WORKDIR /
   
 
  RUN cd /var/lib/asterisk/sounds \
