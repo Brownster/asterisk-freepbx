@@ -45,31 +45,25 @@ RUN git clone https://github.com/asterisk/pjproject.git \
   && make \
   && make install
   
-# make asterisk.
-#Extra sounds
-#Wideband Audio download
-#set permissions
-WORKDIR /temp/src
-ENV rebuild_date 2015-01-31
-# Extract Configure
-# make asterisk.
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISKVER-current.tar.gz
-ENV rebuild_date 2015-01-29
+# Download asterisk.
+# Currently Certified Asterisk 11.6 cert 6.
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz
 
 # gunzip asterisk
 RUN mkdir /tmp/asterisk
 RUN tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1
 WORKDIR /tmp/asterisk
+
+# make asterisk.
+ENV rebuild_date 2015-01-29
 # Configure
 RUN ./configure --libdir=/usr/lib64 1> /dev/null
 # Remove the native build option
 RUN make menuselect.makeopts
-# RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
+RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
 # Continue with a standard make.
 RUN make 1> /dev/null
-RUN make install
-#RUN make install 1> /dev/null
-#RUN make samples 1> /dev/null
+RUN make install 1> /dev/null
 RUN make config
 RUN ldconfig  
 
