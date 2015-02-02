@@ -52,7 +52,7 @@ RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/teleph
   && cd /tmp/asterisk \
 # make asterisk.
 # Configure
-  && ./configure --libdir=/usr/lib64 1> /dev/null --prefix=/opt/asterisk --disable-asteriskssl \
+  && ./configure --prefix=/opt/asterisk --disable-asteriskssl 1> /dev/null \
 # Remove the native build option
   && make menuselect.makeopts \
   && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
