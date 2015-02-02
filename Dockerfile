@@ -4,6 +4,7 @@ MAINTAINER Marc Brown <info@nowhere.nk>
 ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
 ENV FREEPBXVER 12.0.3
+ENV ASTERISKUSER asterisk
 ENV ASTERISK_DB_PW hgftffjgjygfy67r457reew64
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -70,7 +71,7 @@ RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/teleph
 # && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
 # && rm -f asterisk-extra-sounds-en-g722-current.tar.gz \
 # Add asterisk user
-  && useradd -m asterisk \
+  && useradd -m $ASTERISKUSER \
 # Set permissions
   && chown asterisk. /var/run/asterisk \
   && chown -R asterisk. /var/lib/asterisk \
@@ -88,8 +89,8 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && /etc/init.d/mysql start \
   && mysqladmin -u root create asterisk \
   && mysqladmin -u root create asteriskcdrdb \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
   && mysql -u root -e "flush privileges;"
 
 #install free pbx and required mod to moh
@@ -99,7 +100,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && cd /tmp/src/freepbx \
   && /etc/init.d/asterisk start \  
 #&& ./start_asterisk start \
-  && ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
+  && ./install_amp --installdb --username=$ASTERISKUSER --password=$ASTERISK_DB_PW \
   && amportal chown \
   && amportal a ma installall \
   && amportal a reload \
