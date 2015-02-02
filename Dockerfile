@@ -70,8 +70,8 @@ RUN make 1> /dev/null
 RUN make install
 #RUN make install 1> /dev/null
 #RUN make samples 1> /dev/null
-RUN make samples
-  
+RUN make config
+RUN ldconfig  
 
  RUN cd /var/lib/asterisk/sounds \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
