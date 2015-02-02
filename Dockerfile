@@ -45,40 +45,37 @@ RUN git clone https://github.com/asterisk/pjproject.git \
 
 
 # ENV AUTOBUILD_UNIXTIME 1418234402
-
+WORKDIR /tmp/
 # Download asterisk.
 # Currently Certified Asterisk 11.6 cert 6.
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz
-
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz \
 # gunzip asterisk
-RUN mkdir /tmp/asterisk
-RUN tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1
+  && mkdir /tmp/asterisk \
+  && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 \
 WORKDIR /tmp/asterisk
 
 # make asterisk.
 ENV rebuild_date 2015-01-29
 # Configure
-RUN ./configure --libdir=/usr/lib64 1> /dev/null --prefix=/opt/asterisk --disable-asteriskssl
+RUN ./configure --libdir=/usr/lib64 1> /dev/null --prefix=/opt/asterisk --disable-asteriskssl \
 # Remove the native build option
-RUN make menuselect.makeopts
-RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
+  && make menuselect.makeopts \
+  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
 # Continue with a standard make.
-RUN make 1> /dev/null
-RUN make install 1> /dev/null
-RUN make config 1> /dev/null
-RUN ldconfig
-
-WORKDIR /var/lib/asterisk/sounds
-RUN wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
+  && make 1> /dev/null
+  && make install 1> /dev/null
+  && make config 1> /dev/null
+  && ldconfig \
+# get extra sounds
+  && cd/var/lib/asterisk/sounds \
+  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
-  && rm -f asterisk-extra-sounds-en-g722-current.tar.gz
-
-WORKDIR /
+  && rm -f asterisk-extra-sounds-en-g722-current.tar.gz \
 # add asterisk user
-RUN useradd -m asterisk \
+ && useradd -m asterisk \
   # && chown asterisk. /var/run/asterisk \
   && chown -R asterisk. /etc/asterisk \
   && chown -R asterisk. /var/lib/asterisk \
