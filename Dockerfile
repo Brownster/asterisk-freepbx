@@ -72,7 +72,7 @@ RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/teleph
 # Add asterisk user
   && useradd -m asterisk \
 # Set permissions
-  # && chown asterisk. /var/run/asterisk \
+  && chown asterisk. /var/run/asterisk \
   && chown -R asterisk. /etc/asterisk \
   && chown -R asterisk. /var/lib/asterisk \
   && chown -R asterisk. /var/spool/asterisk \
