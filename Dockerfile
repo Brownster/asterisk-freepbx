@@ -5,7 +5,6 @@ ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
 ENV FREEPBXVER 12.0.3
 ENV ASTERISK_DB_PW hgftffjgjygfy67r457reew64
-
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
@@ -15,9 +14,9 @@ CMD ["/sbin/my_init"]
 #    usermod -d /home nobody && \
 #    chown -R nobody:users /home
 
-RUN apt-get update -y
-
-RUN apt-get install -y build-essential linux-headers-`uname -r` openssh-server apache2 mysql-server\
+#update and install needed
+RUN apt-get update -y \
+  && apt-get install -y build-essential linux-headers-`uname -r` openssh-server apache2 mysql-server\
   mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox\
   libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3\
   libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev\
@@ -43,8 +42,6 @@ RUN git clone https://github.com/asterisk/pjproject.git \
   && make \
   && make install
 
-
-# ENV AUTOBUILD_UNIXTIME 1418234402
 WORKDIR /tmp/
 # Download asterisk.
 # Currently Certified Asterisk 11.6 cert 6.
@@ -52,12 +49,10 @@ RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/teleph
 # gunzip asterisk
   && mkdir /tmp/asterisk \
   && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 \
-WORKDIR /tmp/asterisk
-
+  && cd /tmp/asterisk \
 # make asterisk.
-ENV rebuild_date 2015-01-29
 # Configure
-RUN ./configure --libdir=/usr/lib64 1> /dev/null --prefix=/opt/asterisk --disable-asteriskssl \
+  && ./configure --libdir=/usr/lib64 1> /dev/null --prefix=/opt/asterisk --disable-asteriskssl \
 # Remove the native build option
   && make menuselect.makeopts \
   && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
@@ -74,8 +69,9 @@ RUN ./configure --libdir=/usr/lib64 1> /dev/null --prefix=/opt/asterisk --disabl
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-g722-current.tar.gz \
-# add asterisk user
- && useradd -m asterisk \
+# Add asterisk user
+  && useradd -m asterisk \
+# Set permissions
   # && chown asterisk. /var/run/asterisk \
   && chown -R asterisk. /etc/asterisk \
   && chown -R asterisk. /var/lib/asterisk \
@@ -112,6 +108,5 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && amportal chown 
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && amportal restart
-
 
 CMD asterisk -f
