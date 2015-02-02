@@ -88,8 +88,8 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && /etc/init.d/mysql start \
   && mysqladmin -u root create asterisk \
   && mysqladmin -u root create asteriskcdrdb \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
   && mysql -u root -e "flush privileges;"
 
 #install free pbx and required mod to moh
@@ -97,7 +97,7 @@ WORKDIR /tmp/src
 RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && tar vxfz freepbx-$FREEPBXVER.tgz \
   && cd /tmp/src/freepbx \
-  && asterisk start   
+  && /etc/init.d/asterisk start \  
 #&& ./start_asterisk start \
   && ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
   && amportal chown \
