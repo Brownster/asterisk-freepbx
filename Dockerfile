@@ -85,7 +85,7 @@ RUN make samples
   && chown -R $ASTERISKUSER. /var/lib/asterisk \
   && chown -R $ASTERISKUSER. /var/log/asterisk \
   && chown -R $ASTERISKUSER. /var/spool/asterisk \
-  && chown -R $ASTERISKUSER. /usr/lib/asterisk \
+#  && chown -R $ASTERISKUSER. /usr/lib/asterisk \
   && rm -rf /var/www/html
 
 #mod to apache
