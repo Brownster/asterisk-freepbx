@@ -56,7 +56,7 @@ RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISK
   && tar xvfz asterisk-$ASTERISKVER-current.tar.gz \
   && cd asterisk-12.8.1 \
   && ./configure --libdir=/usr/lib64 1> /dev/null \
-  && ./contrib/scripts/get_mp3_source.sh \
+  && contrib/scripts/get_mp3_source.sh \
   && make menuselect.makeopts \
 # Remove the native build option
   && -i "s/BUILD_NATIVE//" menuselect.makeopts \
@@ -64,7 +64,10 @@ RUN wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-$ASTERISK
   && make 1> /dev/null \
   && make install 1> /dev/null \
   && make config \
-  && cd /var/lib/asterisk/sounds \
+  && ldconfig
+  
+
+ RUN cd /var/lib/asterisk/sounds \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
