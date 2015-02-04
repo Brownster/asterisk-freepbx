@@ -67,10 +67,10 @@ RUN ./configure 1> /dev/null \
   && make 1> /dev/null \
   && make install 1> /dev/null \
   && make config \
-  && ldconfig  
-
+  && ldconfig \
+  
 # extra sounds + set permissions
- RUN cd /var/lib/asterisk/sounds \
+  && cd /var/lib/asterisk/sounds \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
@@ -104,7 +104,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && cd /tmp/freepbx \
   && /etc/init.d/mysql start \
   && /usr/sbin/asterisk \
-  &&  ./install_amp --installdb --username=asterisk --password=$ASTERISK_DB_PW \
+  &&  ./install_amp --installdb --username=$ASTERISKUSER --password=$ASTERISK_DB_PW \
   && amportal chown \
   && amportal a ma installall \
   && amportal a reload \
