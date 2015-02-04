@@ -103,6 +103,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && /usr/sbin/asterisk \
   &&  ./install_amp --installdb --username=asterisk --password=$ASTERISK_DB_PW \
   && amportal chown \
+  && amportal restart \
   && amportal a ma installall \
   && amportal a reload \
   && amportal a ma refreshsignatures \
