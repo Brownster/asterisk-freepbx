@@ -112,7 +112,8 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && amportal chown \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && amportal restart
-  && apt-get purge -y
+# clean up download directory  
+  && find /temp -mindepth 1 -delete
 
 EXPOSE 5060
 
