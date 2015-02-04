@@ -47,7 +47,7 @@ RUN git clone https://github.com/asterisk/pjproject.git \
   
 # Download asterisk.
 # Currently Certified Asterisk 13.1.
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-13.1-current.tar.gz
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-$ASTERISKVER-current.tar.gz
 
 # gunzip asterisk
 RUN mkdir /tmp/asterisk
@@ -91,8 +91,8 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && /etc/init.d/mysql start \
   && mysqladmin -u root create asterisk \
   && mysqladmin -u root create asteriskcdrdb \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asterisk@localhost IDENTIFIED BY 'pass123';" \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asterisk@localhost IDENTIFIED BY 'pass123';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO $ASTERISKUSER@localhost IDENTIFIED BY 'ASTERISK_DB_PW';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO $ASTERISKUSER@localhost IDENTIFIED BY 'ASTERISK_DB_PW';" \
   && mysql -u root -e "flush privileges;"
 
 WORKDIR /tmp
@@ -101,7 +101,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && cd /tmp/freepbx \
   && /etc/init.d/mysql start \
   && /usr/sbin/asterisk \
-  &&  ./install_amp --installdb --username=asterisk --password=pass123 \
+  &&  ./install_amp --installdb --username=asterisk --password=$ASTERISK_DB_PW \
   && amportal chown \
   && amportal a ma installall \
   && amportal a reload \
