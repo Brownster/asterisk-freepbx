@@ -6,7 +6,7 @@ MAINTAINER marc brown <marc@22walker.co.uk>
 ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
 ENV ASTERISKUSER asterisk
-ENV ASTERISKVER 12
+ENV ASTERISKVER 13.1
 ENV FREEPBXVER 12.0.3
 ENV ASTERISK_DB_PW pass123
 ENV AUTOBUILD_UNIXTIME 1418234402
@@ -46,8 +46,8 @@ RUN git clone https://github.com/asterisk/pjproject.git \
   && make install
   
 # Download asterisk.
-# Currently Certified Asterisk 11.6 cert 6.
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz
+# Currently Certified Asterisk 13.1.
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-13.1-current.tar.gz
 
 # gunzip asterisk
 RUN mkdir /tmp/asterisk
