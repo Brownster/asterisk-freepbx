@@ -1,28 +1,30 @@
+#asterisk docker file for unraid 6
 FROM phusion/baseimage:0.9.15
-MAINTAINER Marc Brown <info@nowhere.nk>
+MAINTAINER marc brown <marc@22walker.co.uk>
+
 # Set correct environment variables.
 ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
-ENV FREEPBXVER 12.0.3
 ENV ASTERISKUSER asterisk
+ENV ASTERISKVER 12
+ENV FREEPBXVER 12.0.3
 ENV ASTERISK_DB_PW hgftffjgjygfy67r457reew64
+ENV AUTOBUILD_UNIXTIME 1418234402
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
-#Change uid & gid to match Unraid
-#RUN usermod -u 99 nobody && \
-#    usermod -g 100 nobody && \
-#    usermod -d /home nobody && \
-#    chown -R nobody:users /home
+#Install packets that are needed
+RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^
 
-#update and install needed
-RUN apt-get update -y \
-  && apt-get install -y build-essential linux-headers-`uname -r` openssh-server apache2 mysql-server\
-  mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox\
-  libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3\
-  libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev\
-  libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev\
-  libspandsp-dev libiksemel-dev lamp-server^ tar ncurses-dev xinetd wget gtk+-2.0 -y
+#Add user
+# grab gosu for easy step-down from root
+RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
+  && mkdir /var/lib/asterisk && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
+  && usermod --home /var/lib/asterisk $ASTERISKUSER \
+  && rm -rf /var/lib/apt/lists/* \
+  && curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
+  && chmod +x /usr/local/bin/gosu \
+  && apt-get purge -y
 
 #Install Pear DB
 RUN pear uninstall db && pear install db-1.7.14
@@ -42,42 +44,42 @@ RUN git clone https://github.com/asterisk/pjproject.git \
   && ./configure \
   && make \
   && make install
-
-WORKDIR /tmp/
+  
 # Download asterisk.
 # Currently Certified Asterisk 11.6 cert 6.
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz \
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-11.6-current.tar.gz
+
 # gunzip asterisk
-  && mkdir /tmp/asterisk \
-  && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 \
-  && cd /tmp/asterisk \
+RUN mkdir /tmp/asterisk
+RUN tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1
+WORKDIR /tmp/asterisk
+
 # make asterisk.
+ENV rebuild_date 2015-01-29
 # Configure
-  && ./configure --prefix=/opt/asterisk --disable-asteriskssl 1> /dev/null \
+RUN ./configure 1> /dev/null
 # Remove the native build option
-  && make menuselect.makeopts \
-  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
+RUN make menuselect.makeopts
+RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
 # Continue with a standard make.
-  && make 1> /dev/null \
-  && make install 1> /dev/null \
-  && make config 1> /dev/null \
-  && ldconfig \
-# get extra sounds
-# && cd /var/lib/asterisk/sounds \
-# && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
-# && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
-# && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
-# && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
-# && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
-# && rm -f asterisk-extra-sounds-en-g722-current.tar.gz \
-# Add asterisk user
-  && useradd -m $ASTERISKUSER \
-# Set permissions
-  && chown asterisk. /var/run/asterisk \
-  && chown -R asterisk. /var/lib/asterisk \
-  && chown -R asterisk. /var/spool/asterisk \
-  && chown -R asterisk. /var/log/asterisk \
-  #&& chown -R asterisk. /usr/lib/asterisk \
+RUN make 1> /dev/null
+RUN make install 1> /dev/null
+RUN make config
+RUN ldconfig  
+
+ RUN cd /var/lib/asterisk/sounds \
+  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
+  && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
+  && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
+  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
+  && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
+  && rm -f asterisk-extra-sounds-en-g722-current.tar.gz \
+  && chown $ASRERISKUSER. /var/run/asterisk \
+  && chown -R $ASTERISKUSER. /etc/asterisk \
+  && chown -R $ASTERISKUSER. /var/lib/asterisk \
+  && chown -R $ASTERISKUSER. /var/log/asterisk \
+  && chown -R $ASTERISKUSER. /var/spool/asterisk \
+#  && chown -R $ASTERISKUSER. /usr/lib/asterisk \
   && rm -rf /var/www/html
 
 #mod to apache
@@ -89,8 +91,8 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && /etc/init.d/mysql start \
   && mysqladmin -u root create asterisk \
   && mysqladmin -u root create asteriskcdrdb \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
   && mysql -u root -e "flush privileges;"
 
 #install free pbx and required mod to moh
@@ -98,9 +100,8 @@ WORKDIR /tmp/src
 RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && tar vxfz freepbx-$FREEPBXVER.tgz \
   && cd /tmp/src/freepbx \
-  && /etc/init.d/asterisk start \  
-#&& ./start_asterisk start \
-  && ./install_amp --installdb --username=$ASTERISKUSER --password=$ASTERISK_DB_PW \
+  && /usr/sbin/asterisk \
+  &&  ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
   && amportal chown \
   && amportal a ma installall \
   && amportal a reload \
@@ -108,5 +109,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && amportal chown 
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && amportal restart
+
+EXPOSE 5060
 
 CMD asterisk -f
