@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV ASTERISKUSER asterisk
 ENV ASTERISKVER 12
 ENV FREEPBXVER 12.0.3
-ENV ASTERISK_DB_PW hgftffjgjygfy67r457reew64
+ENV ASTERISK_DB_PW pass123
 ENV AUTOBUILD_UNIXTIME 1418234402
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -79,7 +79,7 @@ RUN ldconfig
   && chown -R $ASTERISKUSER. /var/lib/asterisk \
   && chown -R $ASTERISKUSER. /var/log/asterisk \
   && chown -R $ASTERISKUSER. /var/spool/asterisk \
-#  && chown -R $ASTERISKUSER. /usr/lib/asterisk \
+# && chown -R $ASTERISKUSER. /usr/lib/asterisk \
   && rm -rf /var/www/html
 
 #mod to apache
@@ -91,22 +91,22 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && /etc/init.d/mysql start \
   && mysqladmin -u root create asterisk \
   && mysqladmin -u root create asteriskcdrdb \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
-  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asteriskuser@localhost IDENTIFIED BY '${ASTERISK_DB_PW}';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO asterisk@localhost IDENTIFIED BY 'pass123';" \
+  && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO asterisk@localhost IDENTIFIED BY 'pass123';" \
   && mysql -u root -e "flush privileges;"
 
-#install free pbx and required mod to moh
-WORKDIR /tmp/src
+WORKDIR /tmp
 RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && tar vxfz freepbx-$FREEPBXVER.tgz \
-  && cd /tmp/src/freepbx \
+  && cd /tmp/freepbx \
+  && /etc/init.d/mysql start \
   && /usr/sbin/asterisk \
-  &&  ./install_amp --installdb --username=asteriskuser --password=$ASTERISK_DB_PW \
+  &&  ./install_amp --installdb --username=asterisk --password=pass123 \
   && amportal chown \
   && amportal a ma installall \
   && amportal a reload \
   && amportal a ma refreshsignatures \
-  && amportal chown 
+  && amportal chown \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && amportal restart
 
