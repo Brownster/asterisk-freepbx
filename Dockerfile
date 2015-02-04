@@ -47,26 +47,29 @@ RUN git clone https://github.com/asterisk/pjproject.git \
   
 # Download asterisk.
 # Currently Certified Asterisk 13.1.
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-$ASTERISKVER-current.tar.gz
-
+# # gunzip asterisk
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-$ASTERISKVER-current.tar.gz \
+  && mkdir /tmp/asterisk \
+  && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 \
 # gunzip asterisk
-RUN mkdir /tmp/asterisk
-RUN tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1
-WORKDIR /tmp/asterisk
+  && mkdir /tmp/asterisk \
+  && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1
 
 # make asterisk.
-ENV rebuild_date 2015-01-29
+#ENV rebuild_date 2015-01-29
 # Configure
-RUN ./configure 1> /dev/null
+WORKDIR /tmp/asterisk
+RUN ./configure 1> /dev/null \
 # Remove the native build option
-RUN make menuselect.makeopts
-RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
+  && make menuselect.makeopts \
+  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts \
 # Continue with a standard make.
-RUN make 1> /dev/null
-RUN make install 1> /dev/null
-RUN make config
-RUN ldconfig  
+  && make 1> /dev/null \
+  && make install 1> /dev/null \
+  && make config \
+  && ldconfig  
 
+# extra sounds + set permissions
  RUN cd /var/lib/asterisk/sounds \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
@@ -109,6 +112,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && amportal chown \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && amportal restart
+  && apt-get purge -y
 
 EXPOSE 5060
 
