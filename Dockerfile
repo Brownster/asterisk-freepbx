@@ -77,6 +77,9 @@ RUN ldconfig
   && chown $ASRERISKUSER. /var/run/asterisk \
   && chown -R $ASTERISKUSER. /etc/asterisk \
   && chown -R $ASTERISKUSER. /var/lib/asterisk \
+  && chown -R $ASTERISKUSER. /var/www/ \
+  && chown -R $ASTERISKUSER. /var/www/* \
+  && chown -R $ASTERISKUSER. /var/www/*/* \
   && chown -R $ASTERISKUSER. /var/log/asterisk \
   && chown -R $ASTERISKUSER. /var/spool/asterisk \
 # && chown -R $ASTERISKUSER. /usr/lib/asterisk \
@@ -101,16 +104,22 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && cd /tmp/freepbx \
   && /etc/init.d/mysql start \
   && /usr/sbin/asterisk \
-  &&  ./install_amp --installdb --username=asterisk --password=pass123 \
- # && amportal chown \
- # && amportal reload \
+  && ./install_amp --installdb --username=asterisk --password=pass123 \
+  && ./install_amp --update-links \
+  && amportal chown \
+  && amportal reload \
+  && asterisk -rx "core restart now" \
+  && amportal chown \
+  && amportal a ma installall \
+  && amportal a ma upgrade manager \
+  && amportal a ma install manager
   && amportal a ma installall \
   && amportal a restart \
   && amportal a ma refreshsignatures \
   && amportal chown \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && amportal restart
-
+  
 EXPOSE 5060
 
 CMD asterisk -f
