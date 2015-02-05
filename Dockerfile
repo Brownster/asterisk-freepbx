@@ -133,7 +133,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
    && asterisk -rx "core restart now" \
    && amportal a ma refreshsignatures 1>/dev/null \
    && amportal chown \
-   && amportal reload
+   && amportal reload \
    && asterisk -rx "core restart now"
   
 EXPOSE 5060
