@@ -14,7 +14,7 @@ ENV AUTOBUILD_UNIXTIME 1418234402
 CMD ["/sbin/my_init"]
 
 #Install packets that are needed
-RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^
+RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^ 1>/dev/null
 
 #Add user
 # grab gosu for easy step-down from root
@@ -37,19 +37,19 @@ WORKDIR /temp/src/
 RUN git clone https://github.com/asterisk/pjproject.git \
   && git clone https://github.com/akheron/jansson.git \
   && cd /temp/src/pjproject \
-  && ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr \
-  && make dep \
-  && make \
-  && make install \
+  && ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr 1>/dev/null \
+  && make dep 1>/dev/null \
+  && make 1>/dev/null \
+  && make install 1>/dev/null \
   && cd /temp/src/jansson \
-  && autoreconf -i \
-  && ./configure \
-  && make \
-  && make install
+  && autoreconf -i 1>/dev/null \
+  && ./configure 1>/dev/null \
+  && make 1>/dev/null \
+  && make install 1>/dev/null
   
 # Download asterisk.
 # Currently Certified Asterisk 13.1.
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-13.1-current.tar.gz
+RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-13.1-current.tar.gz 1>/dev/null
 
 # gunzip asterisk
 RUN mkdir /tmp/asterisk
@@ -61,19 +61,19 @@ ENV rebuild_date 2015-01-29
 # Configure
 RUN ./configure 1> /dev/null
 # Remove the native build option
-RUN make menuselect.makeopts
+RUN make menuselect.makeopts 1>/dev/null
 RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
 # Continue with a standard make.
 RUN make 1> /dev/null
 RUN make install 1> /dev/null
-RUN make config
+RUN make config 1>/dev/null
 RUN ldconfig  
 
  RUN cd /var/lib/asterisk/sounds \
-  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz \
+  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
-  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz \
+  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz 1>/dev/null \
   && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
   && rm -f asterisk-extra-sounds-en-g722-current.tar.gz \
   && chown $ASRERISKUSER. /var/run/asterisk \
@@ -102,36 +102,39 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && mysql -u root -e "flush privileges;"
 
 WORKDIR /tmp
-RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
+RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
+  && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && tar vxfz freepbx-$FREEPBXVER.tgz \
   && cd /tmp/freepbx \
   && /etc/init.d/mysql start \
   && /usr/sbin/asterisk \
-  && ./install_amp --installdb --skip-module-install --username=asterisk --password=pass123 \
-  && ./install_amp --update-links \
+  && ./install_amp --installdb --skip-module-install --username=asterisk --password=pass123 1>/dev/null \
+  && ./install_amp --update-links 1>/dev/null \
   && amportal chown \
   && amportal reload \
   && asterisk -rx "core restart now" \
   && amportal chown \
-  && amportal a ma install framework \
-  && amportal a ma install core \
-  && amportal a ma install voicemail \
-  && amportal a ma install sipsettings \
-  && amportal a ma install infoservices \
-  && amportal a ma install featurecodeadmin \
-  && amportal a ma install logfiles \
-  && amportal a ma install callrecording \
-  && amportal a ma install cdr \
-  && amportal a ma install dashboard \
+  && amportal a ma install framework 1>/dev/null \
+  && amportal a ma install core 1>/dev/null \
+  && amportal a ma install voicemail 1>/dev/null \
+  && amportal a ma install sipsettings 1>/dev/null \
+  && amportal a ma install infoservices 1>/dev/null \
+  && amportal a ma install featurecodeadmin 1>/dev/null \
+  && amportal a ma install logfiles 1>/dev/null \
+  && amportal a ma install callrecording 1>/dev/null \
+  && amportal a ma install cdr 1>/dev/null \
+  && amportal a ma install dashboard 1>/dev/null \
+ 
+
+# && amportal a ma installall 1>/dev/null \
+#  && amportal a ma upgrade manager 1>/dev/null \
+#  && amportal a ma install manager 1>/dev/null \
 #  && amportal a ma installall \
-#  && amportal a ma upgrade manager \
-#  && amportal a ma install manager
-#  && amportal a ma installall \
-  && amportal a reload \
-  && amportal a ma refreshsignatures \
-  && amportal chown \
-  && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
-  && amportal restart
+   && amportal reload 1>/dev/null \
+#  && amportal a ma refreshsignatures 1>/dev/null \
+#  && amportal chown \
+#  && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
+#  && amportal restart
   
 EXPOSE 5060
 
