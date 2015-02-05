@@ -7,7 +7,7 @@ ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
 ENV ASTERISKUSER asterisk
 ENV ASTERISKVER 13.1
-ENV FREEPBXVER 12.0.3
+ENV FREEPBXVER 12.0.21
 ENV ASTERISK_DB_PW pass123
 ENV AUTOBUILD_UNIXTIME 1418234402
 # Use baseimage-docker's init system.
@@ -102,33 +102,32 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && mysql -u root -e "flush privileges;"
 
 WORKDIR /tmp
-RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
+RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && tar vxfz freepbx-$FREEPBXVER.tgz \
   && cd /tmp/freepbx \
   && /etc/init.d/mysql start \
   && /usr/sbin/asterisk \
-  && ./install_amp --installdb --skip-module-install --username=asterisk --password=pass123 1>/dev/null \
-  && ./install_amp --update-links 1>/dev/null \
+  && ./install_amp --installdb --username=asterisk --password=pass123  \
   && amportal chown \
   && amportal reload \
   && asterisk -rx "core restart now" \
   && amportal chown \
-  && amportal a ma install framework 1>/dev/null \
-  && amportal a ma install core 1>/dev/null \
-  && amportal a ma install voicemail 1>/dev/null \
-  && amportal a ma install sipsettings 1>/dev/null \
-  && amportal a ma install infoservices 1>/dev/null \
-  && amportal a ma install featurecodeadmin 1>/dev/null \
-  && amportal a ma install logfiles 1>/dev/null \
-  && amportal a ma install callrecording 1>/dev/null \
-  && amportal a ma install cdr 1>/dev/null \
-  && amportal a ma install dashboard 1>/dev/null \
+#  && amportal a ma install framework 1>/dev/null \
+#  && amportal a ma install core 1>/dev/null \
+#  && amportal a ma install voicemail 1>/dev/null \
+#  && amportal a ma install sipsettings 1>/dev/null \
+#  && amportal a ma install infoservices 1>/dev/null \
+#  && amportal a ma install featurecodeadmin 1>/dev/null \
+#  && amportal a ma install logfiles 1>/dev/null \
+#  && amportal a ma install callrecording 1>/dev/null \
+#  && amportal a ma install cdr 1>/dev/null \
+ # && amportal a ma install dashboard 1>/dev/null \
  
 
 #  && amportal a ma installall 1>/dev/null \
-   && amportal a ma upgrade manager 1>/dev/null \
-   && amportal a ma install manager 1>/dev/null \
+#   && amportal a ma upgrade manager 1>/dev/null \
+#   && amportal a ma install manager 1>/dev/null \
    && amportal reload 1>/dev/null \
    && asterisk -rx "core restart now" \
    && amportal a ma refreshsignatures 1>/dev/null \
