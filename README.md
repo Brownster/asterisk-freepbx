@@ -1,7 +1,6 @@
-Asterisk dockerfile to meet unraid requirements (still ongoing)...
+# Asterisk dockerfile to meet unraid requirements 
 
-to run
+https://registry.hub.docker.com/u/brownster/freepbx/
 
-doesnt build as yet but when it does:
-
-run --name asterisk --net=host -d -t brownster/asterisk-freepbx
+# to run
+sudo docker run --name asterisk --net=host -d -t brownster/freepbx
