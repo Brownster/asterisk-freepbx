@@ -18,8 +18,10 @@ RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linu
 
 #Add user
 # grab gosu for easy step-down from root
-RUN groupadd -r $ASTERISKUSER && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
-  && mkdir /var/lib/asterisk && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
+RUN groupadd -r $ASTERISKUSER \
+  && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
+  && mkdir /var/lib/asterisk \
+  && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
   && usermod --home /var/lib/asterisk $ASTERISKUSER \
   && rm -rf /var/lib/apt/lists/* \
   && curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
@@ -82,6 +84,7 @@ RUN ldconfig
   && chown -R $ASTERISKUSER. /var/www/*/* \
   && chown -R $ASTERISKUSER. /var/log/asterisk \
   && chown -R $ASTERISKUSER. /var/spool/asterisk \
+  && chown -R $ASTERISKUSER. /var/run/asterisk \
 # && chown -R $ASTERISKUSER. /usr/lib/asterisk \
   && rm -rf /var/www/html
 
@@ -104,17 +107,27 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && cd /tmp/freepbx \
   && /etc/init.d/mysql start \
   && /usr/sbin/asterisk \
-  && ./install_amp --installdb --username=asterisk --password=pass123 \
+  && ./install_amp --installdb --skip-module-install --username=asterisk --password=pass123 \
   && ./install_amp --update-links \
   && amportal chown \
   && amportal reload \
   && asterisk -rx "core restart now" \
   && amportal chown \
-  && amportal a ma installall \
-  && amportal a ma upgrade manager \
-  && amportal a ma install manager
-  && amportal a ma installall \
-  && amportal a restart \
+  && amportal a ma install framework \
+  && amportal a ma install core \
+  && amportal a ma install voicemail \
+  && amportal a ma install sipsettings \
+  && amportal a ma install infoservices \
+  && amportal a ma install featurecodeadmin \
+  && amportal a ma install logfiles \
+  && amportal a ma install callrecording \
+  && amportal a ma install cdr \
+  && amportal a ma upgrade dashboard \
+#  && amportal a ma installall \
+#  && amportal a ma upgrade manager \
+#  && amportal a ma install manager
+#  && amportal a ma installall \
+  && amportal a reload \
   && amportal a ma refreshsignatures \
   && amportal chown \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
