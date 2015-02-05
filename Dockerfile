@@ -122,7 +122,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && amportal a ma install logfiles \
   && amportal a ma install callrecording \
   && amportal a ma install cdr \
-  && amportal a ma upgrade dashboard \
+  && amportal a ma install dashboard \
 #  && amportal a ma installall \
 #  && amportal a ma upgrade manager \
 #  && amportal a ma install manager
