@@ -126,15 +126,15 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
   && amportal a ma install dashboard 1>/dev/null \
  
 
-# && amportal a ma installall 1>/dev/null \
-#  && amportal a ma upgrade manager 1>/dev/null \
-#  && amportal a ma install manager 1>/dev/null \
-#  && amportal a ma installall \
+#  && amportal a ma installall 1>/dev/null \
+   && amportal a ma upgrade manager 1>/dev/null \
+   && amportal a ma install manager 1>/dev/null \
    && amportal reload 1>/dev/null \
-#  && amportal a ma refreshsignatures 1>/dev/null \
-#  && amportal chown \
-#  && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
-#  && amportal restart
+   && asterisk -rx "core restart now" \
+   && amportal a ma refreshsignatures 1>/dev/null \
+   && amportal chown \
+   && amportal reload
+   && asterisk -rx "core restart now"
   
 EXPOSE 5060
 
