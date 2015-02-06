@@ -102,7 +102,7 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && mysql -u root -e "flush privileges;"
 
 WORKDIR /tmp
-RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz
+RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && tar vxfz freepbx-$FREEPBXVER.tgz \
   && cd /tmp/freepbx \
