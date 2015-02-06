@@ -21,7 +21,9 @@ RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linu
 RUN groupadd -r $ASTERISKUSER \
   && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
   && mkdir /var/lib/asterisk \
+  && mkdir /etc/freepbxbackup \
   && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
+  && chown $ASTERISKUSER:$ASTERISKUSER /etc/freepbxbackup \
   && usermod --home /var/lib/asterisk $ASTERISKUSER \
   && rm -rf /var/lib/apt/lists/* \
   && curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
@@ -136,6 +138,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
    && asterisk -rx "core restart now"
 
 # Add VOLUMEs to allow backup of config and databases
+VOLUME ["/etc/freepbxbackup"]
 #VOLUME  ["/etc/mysql", "/var/lib/mysql", "/etc/asterisk"]
   
 EXPOSE 5060
