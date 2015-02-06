@@ -58,6 +58,8 @@ WORKDIR /tmp/asterisk
 
 # make asterisk.
 ENV rebuild_date 2015-01-29
+RUN mkdir /var/lib/asterisk
+RUN mkdir /etc/asterisk
 # Configure
 RUN ./configure 1> /dev/null
 # Remove the native build option
@@ -81,11 +83,10 @@ RUN ldconfig
   && chown -R $ASTERISKUSER. /var/lib/asterisk \
   && chown -R $ASTERISKUSER. /var/www/ \
   && chown -R $ASTERISKUSER. /var/www/* \
-# && chown -R $ASTERISKUSER. /var/www/html/admin/libraries \
   && chown -R $ASTERISKUSER. /var/log/asterisk \
   && chown -R $ASTERISKUSER. /var/spool/asterisk \
   && chown -R $ASTERISKUSER. /var/run/asterisk \
-# && chown -R $ASTERISKUSER. /usr/lib/asterisk \
+  && chown -R $ASTERISKUSER. /var/lib/asterisk \
   && mkdir /etc/freepbxbackup \
   && chown $ASTERISKUSER:$ASTERISKUSER /etc/freepbxbackup \
   && rm -rf /var/www/html
