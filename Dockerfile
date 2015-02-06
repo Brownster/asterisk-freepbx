@@ -30,6 +30,9 @@ EXPOSE 10000/udp 10001/udp 10002/udp 10003/udp 10004/udp 10005/udp 10006/udp 100
 10081/udp 10082/udp 10083/udp 10084/udp 10085/udp 10086/udp 10087/udp 10088/udp 10089/udp 10090/udp \
 10091/udp 10092/udp 10093/udp 10094/udp 10095/udp 10096/udp 10097/udp 10098/udp 10099/udp
 
+#ADD start.sh /root/
+#CMD bash -C '/root/start.sh';'bash'
+
 #Install packets that are needed
 RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^
 
