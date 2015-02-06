@@ -137,10 +137,9 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
    && amportal reload \
    && asterisk -rx "core restart now"
 
-# Add VOLUMEs to allow backup of config and databases
+# Add VOLUME to allow backup of FREEPBX
 VOLUME ["/etc/freepbxbackup"]
-#VOLUME  ["/etc/mysql", "/var/lib/mysql", "/etc/asterisk"]
-  
+
 EXPOSE 5060
 
 CMD asterisk -f
