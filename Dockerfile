@@ -1,6 +1,6 @@
 #asterisk docker file for unraid 6
 FROM phusion/baseimage:0.9.15
-MAINTAINER marc brown <marc@22walker.co.uk>
+MAINTAINER marc brown <marc@22walker.co.uk> v2
 
 # Set correct environment variables.
 ENV HOME /root
@@ -134,6 +134,9 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz
    && amportal chown \
    && amportal reload \
    && asterisk -rx "core restart now"
+
+# Add VOLUMEs to allow backup of config and databases
+#VOLUME  ["/etc/mysql", "/var/lib/mysql", "/etc/asterisk"]
   
 EXPOSE 5060
 
