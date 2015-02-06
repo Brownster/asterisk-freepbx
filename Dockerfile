@@ -1,6 +1,6 @@
 #asterisk docker file for unraid 6
 FROM phusion/baseimage:0.9.15
-MAINTAINER marc brown <marc@22walker.co.uk> v0.2
+MAINTAINER marc brown <marc@22walker.co.uk>
 
 # Set correct environment variables.
 ENV HOME /root
@@ -14,16 +14,14 @@ ENV AUTOBUILD_UNIXTIME 1418234402
 CMD ["/sbin/my_init"]
 
 #Install packets that are needed
-RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^ 1>/dev/null
+RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^
 
 #Add user
 # grab gosu for easy step-down from root
 RUN groupadd -r $ASTERISKUSER \
   && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
   && mkdir /var/lib/asterisk \
-  && mkdir /etc/freepbxbackup \
   && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
-  && chown $ASTERISKUSER:$ASTERISKUSER /etc/freepbxbackup \
   && usermod --home /var/lib/asterisk $ASTERISKUSER \
   && rm -rf /var/lib/apt/lists/* \
   && curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
@@ -39,15 +37,15 @@ WORKDIR /temp/src/
 RUN git clone https://github.com/asterisk/pjproject.git \
   && git clone https://github.com/akheron/jansson.git \
   && cd /temp/src/pjproject \
-  && ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr 1>/dev/null \
-  && make dep 1>/dev/null \
-  && make 1>/dev/null \
-  && make install 1>/dev/null \
+  && ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr \
+  && make dep \
+  && make \
+  && make install \
   && cd /temp/src/jansson \
   && autoreconf -i 1>/dev/null \
   && ./configure 1>/dev/null \
   && make 1>/dev/null \
-  && make install 1>/dev/null
+  && make install
   
 # Download asterisk.
 # Currently Certified Asterisk 13.1.
@@ -83,11 +81,13 @@ RUN ldconfig
   && chown -R $ASTERISKUSER. /var/lib/asterisk \
   && chown -R $ASTERISKUSER. /var/www/ \
   && chown -R $ASTERISKUSER. /var/www/* \
-  && chown -R $ASTERISKUSER. /var/www/*/* \
+# && chown -R $ASTERISKUSER. /var/www/html/admin/libraries \
   && chown -R $ASTERISKUSER. /var/log/asterisk \
   && chown -R $ASTERISKUSER. /var/spool/asterisk \
   && chown -R $ASTERISKUSER. /var/run/asterisk \
 # && chown -R $ASTERISKUSER. /usr/lib/asterisk \
+  && mkdir /etc/freepbxbackup \
+  && chown $ASTERISKUSER:$ASTERISKUSER /etc/freepbxbackup \
   && rm -rf /var/www/html
 
 #mod to apache
@@ -104,7 +104,7 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && mysql -u root -e "flush privileges;"
 
 WORKDIR /tmp
-RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
+RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && tar vxfz freepbx-$FREEPBXVER.tgz \
   && cd /tmp/freepbx \
@@ -115,7 +115,21 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
   && amportal reload \
   && asterisk -rx "core restart now" \
   && amportal chown \
+#  && amportal a ma install framework 1>/dev/null \
+#  && amportal a ma install core 1>/dev/null \
+#  && amportal a ma install voicemail 1>/dev/null \
+#  && amportal a ma install sipsettings 1>/dev/null \
+#  && amportal a ma install infoservices 1>/dev/null \
+#  && amportal a ma install featurecodeadmin 1>/dev/null \
+#  && amportal a ma install logfiles 1>/dev/null \
+#  && amportal a ma install callrecording 1>/dev/null \
+#  && amportal a ma install cdr 1>/dev/null \
+ # && amportal a ma install dashboard 1>/dev/null \
+ 
+
 #  && amportal a ma installall 1>/dev/null \
+#   && amportal a ma upgrade manager 1>/dev/null \
+#   && amportal a ma install manager 1>/dev/null \
    && amportal reload 1>/dev/null \
    && asterisk -rx "core restart now" \
    && amportal a ma refreshsignatures 1>/dev/null \
@@ -125,7 +139,9 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz \
 
 # Add VOLUME to allow backup of FREEPBX
 VOLUME ["/etc/freepbxbackup"]
-
+  
 EXPOSE 5060
+EXPOSE 10000-20000
+EXPOSE 80
 
 CMD asterisk -f
