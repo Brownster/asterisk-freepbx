@@ -9,6 +9,9 @@ EXPOSED ports 80 5060 and 10000-10099, so freepbx rtp settings will need editing
 
 Mount point /etc/freepbxbackup to allow easy backup of freepbx out of container.
 
+
+Things to include in next build:
+
 Changing rtp port range:
 
 nano /etc/asterisk/rtp.conf
@@ -25,3 +28,7 @@ rtpstart=10000
 rtpend=10099
 
 4 ports required for each concurrent phone call.  
+
+
+nano /etc/httpd/conf/httpd.conf
+Change Listen 0.0.0.0:80 to Listen 0.0.0.0:8009
