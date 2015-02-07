@@ -156,4 +156,4 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
    && amportal reload \
    && asterisk -rx "core restart now"
 
-CMD asterisk -f
+CMD bash -C '/root/start.sh';'bash'
