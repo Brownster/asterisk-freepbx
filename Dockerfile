@@ -12,6 +12,8 @@ ENV ASTERISK_DB_PW pass123
 ENV AUTOBUILD_UNIXTIME 1418234402
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
+# Add start.sh
+ADD start.sh /root/
 
 # Add VOLUME to allow backup of FREEPBX
 VOLUME ["/etc/freepbxbackup"]
