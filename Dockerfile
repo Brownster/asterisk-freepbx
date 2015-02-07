@@ -1,6 +1,6 @@
-#asterisk docker file for unraid 6
+#FreePBX Docker File
 FROM phusion/baseimage:0.9.15
-MAINTAINER marc brown <marc@22walker.co.uk> v0.3
+MAINTAINER marc brown <marc@22walker.co.uk> v0.4
 
 # Set correct environment variables.
 ENV HOME /root
@@ -34,8 +34,6 @@ EXPOSE 10000/udp 10001/udp 10002/udp 10003/udp 10004/udp 10005/udp 10006/udp 100
 
 #Install packets that are needed
 RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^
-
-
 
 #Add user
 # grab gosu for easy step-down from root
@@ -146,8 +144,6 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
 #  && amportal a ma install callrecording 1>/dev/null \
 #  && amportal a ma install cdr 1>/dev/null \
  # && amportal a ma install dashboard 1>/dev/null \
- 
-
 #  && amportal a ma installall 1>/dev/null \
    && amportal reload 1>/dev/null \
    && asterisk -rx "core restart now" \
