@@ -18,7 +18,7 @@ ADD start.sh /root/
 # Add VOLUME to allow backup of FREEPBX
 VOLUME ["/etc/freepbxbackup"]
 
-# open up ports needed  by freepbs and asterisk 5060 sip reg 80 web port 10000-10099 rtp   
+# open up ports needed  by freepbx and asterisk 5060 sip reg 80 web port 10000-10099 rtp   
 EXPOSE 5060
 EXPOSE 80
 EXPOSE 10000/udp 10001/udp 10002/udp 10003/udp 10004/udp 10005/udp 10006/udp 10007/udp 10008/udp 10009/udp 10010/udp \
