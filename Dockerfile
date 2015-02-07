@@ -106,7 +106,6 @@ RUN ldconfig
   && chown -R $ASTERISKUSER. /var/spool/asterisk \
   && chown -R $ASTERISKUSER. /var/run/asterisk \
   && chown -R $ASTERISKUSER. /var/lib/asterisk \
-  && mkdir /etc/freepbxbackup \
   && chown $ASTERISKUSER:$ASTERISKUSER /etc/freepbxbackup \
   && rm -rf /var/www/html
 
