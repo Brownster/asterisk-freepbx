@@ -21,6 +21,7 @@ VOLUME ["/etc/freepbxbackup"]
 # open up ports needed  by freepbx and asterisk 5060 sip reg 80 web port 10000-10099 rtp   
 EXPOSE 5060
 EXPOSE 80
+EXPOSE 8009
 EXPOSE 10000/udp 10001/udp 10002/udp 10003/udp 10004/udp 10005/udp 10006/udp 10007/udp 10008/udp 10009/udp 10010/udp \
 10011/udp 10012/udp 10013/udp 10014/udp 10015/udp 10016/udp 10017/udp 10018/udp 10019/udp 10020/udp \
 10021/udp 10022/udp 10023/udp 10024/udp 10025/udp 10026/udp 10027/udp 10028/udp 10029/udp 10030/udp \
