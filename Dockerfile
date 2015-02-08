@@ -157,6 +157,6 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
    && asterisk -rx "core restart now"
 
 # Attempt to change default web port from 80 to $FREEPBXPORT
-RUN sed 's/Listen 80/Listen $FREEPBXPORT/' /etc/apache2/ports.conf
+RUN sed 's/Listen 80/Listen '$FREEPBXPORT'/' /etc/apache2/ports.conf
 
 CMD bash -C '/root/start.sh';'bash'
