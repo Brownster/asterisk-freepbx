@@ -36,7 +36,7 @@ EXPOSE 10000/udp 10001/udp 10002/udp 10003/udp 10004/udp 10005/udp 10006/udp 100
 ADD start.sh /root/
 
 #Install packets that are needed
-RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^
+RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev lamp-server^ 1>/dev/null
 
 #Add user
 # grab gosu for easy step-down from root
@@ -51,23 +51,24 @@ RUN groupadd -r $ASTERISKUSER \
   && apt-get purge -y
 
 #Install Pear DB
-RUN pear uninstall db && pear install db-1.7.14
+RUN pear uninstall db 1>/dev/null \
+  && pear install db-1.7.14 1>/dev/null
 
 #build pj project
 #build jansson
 WORKDIR /temp/src/
-RUN git clone https://github.com/asterisk/pjproject.git \
-  && git clone https://github.com/akheron/jansson.git \
+RUN git clone https://github.com/asterisk/pjproject.git 1>/dev/null \
+  && git clone https://github.com/akheron/jansson.git 1>/dev/null \
   && cd /temp/src/pjproject \
-  && ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr \
-  && make dep \
-  && make \
-  && make install \
+  && ./configure --enable-shared --disable-sound --disable-resample --disable-video --disable-opencore-amr 1>/dev/null \
+  && make dep 1>/dev/null \
+  && make 1>/dev/null \
+  && make install 1>/dev/null \
   && cd /temp/src/jansson \
   && autoreconf -i 1>/dev/null \
   && ./configure 1>/dev/null \
   && make 1>/dev/null \
-  && make install
+  && make install 1>/dev/null
   
 # Download asterisk.
 # Currently Certified Asterisk 13.1.
@@ -75,7 +76,7 @@ RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/teleph
 
 # gunzip asterisk
 RUN mkdir /tmp/asterisk
-RUN tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1
+RUN tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 1>/dev/null
 WORKDIR /tmp/asterisk
 
 # make asterisk.
@@ -85,7 +86,7 @@ RUN mkdir /etc/asterisk
 RUN ./configure 1> /dev/null
 # Remove the native build option
 RUN make menuselect.makeopts 1>/dev/null
-RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts
+RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null
 # Continue with a standard make.
 RUN make 1> /dev/null
 RUN make install 1> /dev/null
@@ -94,10 +95,10 @@ RUN ldconfig
 
  RUN cd /var/lib/asterisk/sounds \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
-  && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz \
-  && rm -f asterisk-extra-sounds-en-wav-current.tar.gz \
+  && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
+  && rm -f asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz 1>/dev/null \
-  && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz \
+  && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz 1>/dev/null \
   && rm -f asterisk-extra-sounds-en-g722-current.tar.gz \
   && chown $ASRERISKUSER. /var/run/asterisk \
   && chown -R $ASTERISKUSER. /etc/asterisk \
@@ -116,8 +117,8 @@ RUN ldconfig
 RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf_orig \
   && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
-  && service apache2 restart \
-  && /etc/init.d/mysql start \
+  && service apache2 restart 1>/dev/null \
+  && /etc/init.d/mysql start 1>/dev/null \
   && mysqladmin -u root create asterisk \
   && mysqladmin -u root create asteriskcdrdb \
   && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
@@ -127,11 +128,11 @@ RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
 WORKDIR /tmp
 RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
-  && tar vxfz freepbx-$FREEPBXVER.tgz \
+  && tar vxfz freepbx-$FREEPBXVER.tgz 1>/dev/null \
   && cd /tmp/freepbx \
-  && /etc/init.d/mysql start \
-  && /usr/sbin/asterisk \
-  && ./install_amp --installdb --username=$ASTERISKUSER --password=$ASTERISK_DB_PW \
+  && /etc/init.d/mysql start 1>/dev/null \
+  && /usr/sbin/asterisk 1>/dev/null \
+  && ./install_amp --installdb --username=$ASTERISKUSER --password=$ASTERISK_DB_PW 1>/dev/null \
   && amportal chown \
   && amportal reload \
   && asterisk -rx "core restart now" \
@@ -145,9 +146,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null \
 #  && amportal a ma install logfiles 1>/dev/null \
 #  && amportal a ma install callrecording 1>/dev/null \
 #  && amportal a ma install cdr 1>/dev/null \
- # && amportal a ma install dashboard 1>/dev/null \
- 
-
+#  && amportal a ma install dashboard 1>/dev/null \
 #  && amportal a ma installall 1>/dev/null \
    && amportal reload 1>/dev/null \
    && asterisk -rx "core restart now" \
