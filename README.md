@@ -38,3 +38,5 @@ Things to include in next build:
 
 2,Change apache listening port 
   Change Listen 0.0.0.0:80 to Listen 0.0.0.0:8009
+
+3, compact commands as much as possible look at possibilty of using a install.sh
