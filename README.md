@@ -36,20 +36,5 @@ Things to include in next build:
 
 1, issues stated above to be resolved so freepbx starts cleanly
 
-2, Changing rtp port range in rtp.con to look something like:
-
-nano /etc/asterisk/rtp.conf
-;
-; RTP Configuration
-;
-[general]
-;
-; RTP start and RTP end configure start and end addresses
-; These are the addresses where your system will RECEIVE audio and video stream$
-; If you have connections across a firewall, make sure that these are open.
-;
-rtpstart=10000
-rtpend=10099
-
-3,Change apache listening port 
+2,Change apache listening port 
   Change Listen 0.0.0.0:80 to Listen 0.0.0.0:8009
