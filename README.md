@@ -16,6 +16,12 @@ At Directory /var/www/ you'll see a line like the following:
 ISSUE 2, - issue with framework...
 FIX - From container command line:
   amportal a ma update framework
+  
+Issue 3, unsigned module
+FIX: 
+amportal chown
+amportal a ma refreshsignatures
+amportal a reload
 
 After that freepbx seems to be happy.
 
