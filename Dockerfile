@@ -17,7 +17,7 @@ CMD ["/sbin/my_init"]
 # Add VOLUME to allow backup of FREEPBX
 VOLUME ["/etc/freepbxbackup"]
 
-# open up ports needed  by freepbs and asterisk 5060 sip reg 80 web port 10000-10099 rtp   
+# open up ports needed  by freepbx and asterisk 5060 sip reg 80 web port 10000-10099 rtp   
 EXPOSE 5060
 EXPOSE 80
 EXPOSE 8009
