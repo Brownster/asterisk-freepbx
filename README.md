@@ -14,7 +14,7 @@ At Directory /var/www/ you'll see a line like the following:
 *** issue 2 and 3 should be resolved if building from docker file ***
 
 ISSUE 2, - issue with framework...
-FIX - From conttainer command line:
+FIX - From container command line:
   amportal a ma update framework
 
 After that freepbx seems to be happy.
