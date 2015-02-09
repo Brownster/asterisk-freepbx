@@ -5,7 +5,7 @@ service apache2 start
 # start mysql
 /etc/init.d/mysql start
 # start asterisk
-/usr/sbin/asterisk
+service asterisk start
 # start amp
 amportal reload
 
