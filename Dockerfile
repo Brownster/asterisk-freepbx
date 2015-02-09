@@ -10141,6 +10141,6 @@ EXPOSE 10000/udp \
    19997/udp \
    19998/udp \
    19999/udp \
-   20000/udp 1>/dev/null
+   20000/udp
  
 CMD bash -C '/root/start.sh';'bash'
