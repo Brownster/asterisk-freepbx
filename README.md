@@ -1,6 +1,6 @@
 # FREEPBX dockerfile 
 
-Believe it or not this actually seems to work now!
+Believe it or not this actually seems to work now - But still a work in progress!
 
 i had a couple of issue to resolve with freepbx on first run of the container:
 
