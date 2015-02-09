@@ -4,7 +4,7 @@ Believe it or not this actually seems to work now - But still a work in progress
 
 I had a couple of issue to resolve with freepbx on first run of the container:
 
-Issue 1, - complaining of unsigned.....
+Issue 1, - complaining of access.....
 FIX-vi /etc/apache2/apache2.conf and hit Return / Enter.
 
 At Directory /var/www/ you'll see a line like the following:
