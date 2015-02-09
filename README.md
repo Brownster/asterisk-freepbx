@@ -40,7 +40,7 @@ Things to include in next build:
 
 1, issues stated above to be resolved so freepbx starts cleanly
 
-2,Change apache listening port 
+2,Change apache listening port (maybe done in docker file not had time to build and check the sed command works)
   Change Listen 0.0.0.0:80 to Listen 0.0.0.0:8009
 
 3, compact commands as much as possible look at possibilty of using a install.sh
