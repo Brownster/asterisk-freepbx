@@ -72,6 +72,7 @@ RUN ./configure 1> /dev/null
 # Remove the native build option
 RUN make menuselect.makeopts 1>/dev/null
 RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null
+RUN menuselect/menuselect --enable chan_sip  menuselect.makeopts 1>/dev/null
 # Continue with a standard make.
 RUN make 1> /dev/null
 RUN make install 1> /dev/null
