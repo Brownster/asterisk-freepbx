@@ -131,7 +131,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null 2>/dev/nu
    && asterisk -rx "core restart now" \
 
 # Attempt to change default web port from 80 to $FREEPBXPORT
-&& sed 's/Listen 80/Listen '$FREEPBXPORT'/' /etc/apache2/ports.conf \
+&& sed 's/Listen 80/Listen $FREEPBXPORT' /etc/apache2/ports.conf \
 #clean up
 && find /temp -mindepth 1 -delete \
 && apt-get purge -y
