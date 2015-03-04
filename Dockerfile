@@ -134,7 +134,10 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null 2>/dev/nu
 && sed 's/Listen 80/Listen $FREEPBXPORT' /etc/apache2/ports.conf \
 #clean up
 && find /temp -mindepth 1 -delete \
-&& apt-get purge -y
+&& apt-get purge -y \
+&& apt-get --yes autoremove \
+&& apt-get clean all \
+&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # open up ports needed  by freepbx and asterisk 5060 sip reg 80 web port 10000-10099 rtp   
 EXPOSE 5060
