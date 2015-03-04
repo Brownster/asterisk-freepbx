@@ -23,7 +23,6 @@ ADD start.sh /root/
 #Install packets that are needed
 RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev openssl lamp-server^ 1>/dev/null
 
-#Add user
 # grab gosu for easy step-down from root
 RUN groupadd -r $ASTERISKUSER \
   && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
@@ -33,10 +32,10 @@ RUN groupadd -r $ASTERISKUSER \
   && rm -rf /var/lib/apt/lists/* \
   && curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
   && chmod +x /usr/local/bin/gosu \
-  && apt-get purge -y
+  && apt-get purge -y \
 
 #Install Pear DB
-RUN pear uninstall db 1>/dev/null \
+  && pear uninstall db 1>/dev/null \
   && pear install db-1.7.14 1>/dev/null
 
 #build pj project
@@ -53,33 +52,33 @@ RUN git clone https://github.com/asterisk/pjproject.git 1>/dev/null \
   && autoreconf -i 1>/dev/null \
   && ./configure 1>/dev/null \
   && make 1>/dev/null \
-  && make install 1>/dev/null
+  && make install 1>/dev/null \
   
 # Download asterisk.
 # Currently Certified Asterisk 13.1.
-RUN curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-13.1-current.tar.gz 1>/dev/null
+  && curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-13.1-current.tar.gz 1>/dev/null \
 
 # gunzip asterisk
-RUN mkdir /tmp/asterisk
-RUN tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 1>/dev/null
+  && mkdir /tmp/asterisk \
+  && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 1>/dev/null
 WORKDIR /tmp/asterisk
 
 # make asterisk.
-ENV rebuild_date 2015-01-29
-RUN mkdir /etc/asterisk
+# ENV rebuild_date 2015-01-29
+RUN mkdir /etc/asterisk \
 # Configure
-RUN ./configure 1> /dev/null
+  && ./configure 1> /dev/null \
 # Remove the native build option
-RUN make menuselect.makeopts 1>/dev/null
-RUN sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null
-RUN menuselect/menuselect --enable chan_sip  menuselect.makeopts 1>/dev/null
+  && make menuselect.makeopts 1>/dev/null \
+  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null \
+  && menuselect/menuselect --enable chan_sip  menuselect.makeopts 1>/dev/null \
 # Continue with a standard make.
-RUN make 1> /dev/null
-RUN make install 1> /dev/null
-RUN make config 1>/dev/null
-RUN ldconfig  
+  && make 1> /dev/null \
+  && make install 1> /dev/null \
+  && make config 1>/dev/null \
+  && ldconfig \
 
- RUN cd /var/lib/asterisk/sounds \
+  && cd /var/lib/asterisk/sounds \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
   && rm -f asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
@@ -96,11 +95,11 @@ RUN ldconfig
   && chown -R $ASTERISKUSER. /var/run/asterisk \
   && chown -R $ASTERISKUSER. /var/lib/asterisk \
   && chown $ASTERISKUSER:$ASTERISKUSER /etc/freepbxbackup \
-  && rm -rf /var/www/html
+  && rm -rf /var/www/html \
 
 #mod to apache
 #Setup mysql
-RUN sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
+  && sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf_orig \
   && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
   && service apache2 restart 1>/dev/null \
@@ -123,18 +122,18 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null 2>/dev/nu
   && amportal reload \
   && asterisk -rx "core restart now" \
   && amportal chown \
-   && amportal reload 1>/dev/null \
-   && asterisk -rx "core restart now" \
-   && amportal a ma refreshsignatures 1>/dev/null \
-   && amportal chown \
-   && amportal reload \
-   && asterisk -rx "core restart now" \
+  && amportal reload 1>/dev/null \
+  && asterisk -rx "core restart now" \
+  && amportal a ma refreshsignatures 1>/dev/null \
+  && amportal chown \
+  && amportal reload \
+  && asterisk -rx "core restart now" \
 
 # Attempt to change default web port from 80 to $FREEPBXPORT
-&& sed 's/Listen 80/Listen $FREEPBXPORT' /etc/apache2/ports.conf \
+  && sed 's/Listen 80/Listen $FREEPBXPORT' /etc/apache2/ports.conf \
 #clean up
-&& find /temp -mindepth 1 -delete \
-&& apt-get purge -y
+  && find /temp -mindepth 1 -delete \
+  && apt-get purge -y
 
 # open up ports needed  by freepbx and asterisk 5060 sip reg 80 web port 10000-10099 rtp   
 EXPOSE 5060
