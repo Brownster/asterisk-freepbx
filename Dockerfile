@@ -70,8 +70,8 @@ RUN mkdir /etc/asterisk \
   && ./configure 1> /dev/null \
 # Remove the native build option
   && make menuselect.makeopts 1>/dev/null \
-  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null \
-  && menuselect/menuselect --enable chan_sip  menuselect.makeopts 1>/dev/null \
+#  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null \
+  && menuselect/menuselect --enable chan_sip --disable BUILD_NATIVE  --enable CORE-SOUNDS-EN-WAV --enable CORE-SOUNDS-EN-SLN16 --enable MOH-OPSOUND-WAV --enable MOH-OPSOUND-SLN16 menuselect.makeopts  menuselect.makeopts 1>/dev/null \
 # Continue with a standard make.
   && make 1> /dev/null \
   && make install 1> /dev/null \
