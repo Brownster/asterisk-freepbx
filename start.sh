@@ -8,11 +8,9 @@ service apache2 start
 service asterisk start
 # start amp
 amportal reload
-
-#Experiment Get freepbx to start cleanly as i can
-# amportal chown
-# amportal a ma refreshsignatures
-# amportal a reload
-# amportal a ma update framework
+amportal chown
+amportal a ma refreshsignatures
+amportal a reload
+amportal a ma update framework
 
 
