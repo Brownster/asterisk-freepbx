@@ -134,6 +134,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null 2>/dev/nu
   && amportal a ma refreshsignatures 1>/dev/null \
   && amportal chown \
   && amportal reload \
+  && asterisk -rx "core restart now" \
 
 # Attempt to change default web port from 80 to $FREEPBXPORT - currently 8009
   && sed -i 's/Listen 80/Listen "$FREEPBXPORT"/' /etc/apache2/ports.conf \
