@@ -137,7 +137,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null 2>/dev/nu
   && asterisk -rx "core restart now" \
 
 # Attempt to change default web port from 80 to $FREEPBXPORT - currently 8009
-  && sed -i 's/Listen 80/Listen "$FREEPBXPORT"/' /etc/apache2/ports.conf \
+  && sed -i 's/Listen 80/Listen $FREEPBXPORT/' /etc/apache2/ports.conf \
   && sed -i 's/<VirtualHost *: 80>/<VirtualHost *: "$FREEPBXPORT">/' /etc/apache2/sites-enabled/000-default.conf \
   && service apache2 restart
 #clean up
