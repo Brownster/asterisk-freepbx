@@ -1,6 +1,6 @@
 # FREEPBX dockerfile 
 
-Believe it or not this actually seems to work now - But still a work in progress!
+This Dockerfile builds and runs OK it is though still a work in progress!
 
 There is still the issue to resolve with freepbx on first run of the container:
 
@@ -22,7 +22,7 @@ You can find the current version at (now old):
 
 https://registry.hub.docker.com/u/brownster/freepbx12021/
 
-# To Run
+A basic run example:
 sudo docker run --name freepbx -v /place/to/put/backup:/etc/freepbxbackup --net=host -d -t brownster/freepbx12021
 
 EXPOSED ports 80 tcp 5060 tcp and 10000-20000 udp
@@ -31,6 +31,19 @@ Mount point /etc/freepbxbackup to allow easy backup of freepbx out of the contai
 
 on first run set passwords and then install freepbx modules required and upgrade
 
-Things to include in next build:
+TO BUILD FROM DOCKERFILE:
+
+git clone https://github.com/Brownster/NZB-INSTALL-SCRIPT.git freepbx
+
+cd freepbx
+
+sudo docker build -t yourdockerrepo/freepbx .
+
+you can then push the image to your docker repo.
+
+if you make any changes whilst using freepbx use commit to save your changes.
+
+
+Things to do:
 
 1, issue stated above to be resolved so freepbx starts cleanly
