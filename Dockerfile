@@ -73,7 +73,7 @@ WORKDIR /tmp/asterisk
 # ENV rebuild_date 2015-01-29
 RUN mkdir /etc/asterisk \
 # Configure
-  && ./configure./configure --with-ssl=/opt/local --with-crypto=/opt/local 1> /dev/null \
+  && ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1> /dev/null \
 # Remove the native build option
   && make menuselect.makeopts 1>/dev/null \
 #  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null \
