@@ -29,15 +29,15 @@ ADD start.sh /root/
 #Install packets that are needed
 RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev openssl lamp-server^ 1>/dev/null
 
-# grab gosu for easy step-down from root
+# add asterisk user
 RUN groupadd -r $ASTERISKUSER \
   && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
   && mkdir /var/lib/asterisk \
   && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
   && usermod --home /var/lib/asterisk $ASTERISKUSER \
   && rm -rf /var/lib/apt/lists/* \
-  && curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
-  && chmod +x /usr/local/bin/gosu \
+#  && curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
+#  && chmod +x /usr/local/bin/gosu \
   && apt-get purge -y \
 
 #Install Pear DB
