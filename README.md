@@ -16,6 +16,8 @@ At Directory /var/www/ you'll see a line like the following:
 
 "AllowOverride None" - change this to "AllowOverride ALL".
 
+service apache2 restart
+
 After that freepbx seems to be happy - once you have updated the modules of freepbx.
 
 You can find the current version at (now old):
