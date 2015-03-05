@@ -100,7 +100,6 @@ RUN mkdir /etc/asterisk \
   && chown -R $ASTERISKUSER. /var/spool/asterisk \
   && chown -R $ASTERISKUSER. /var/run/asterisk \
   && chown -R $ASTERISKUSER. /var/lib/asterisk \
-  && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf
   && chown $ASTERISKUSER:$ASTERISKUSER /etc/freepbxbackup \
   && rm -rf /var/www/html \
 
@@ -135,6 +134,7 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null 2>/dev/nu
   && amportal chown \
   && amportal reload \
   && asterisk -rx "core restart now" \
+  && && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf \
 
 # Attempt to change default web port from 80 to $FREEPBXPORT - currently 8009
   && sed -i 's/Listen 80/Listen $FREEPBXPORT/' /etc/apache2/ports.conf \
