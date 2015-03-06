@@ -108,6 +108,7 @@ RUN mkdir /etc/asterisk \
   && sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
   && cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf_orig \
   && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
+  && ed -s /etc/apache2/apache2.conf  <<< $'/Options Indexes FollowSymLinks/+1s/AllowOverride None/AllowOverride ALL/g\nw' \
   && service apache2 restart 1>/dev/null \
   && /etc/init.d/mysql start 1>/dev/null \
   && mysqladmin -u root create asterisk \
