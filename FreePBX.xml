@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container>
+  <Beta>True</Beta>
+  <Category>Productivity:</Category>
+  <Name>FreePBX-12</Name>
+  <Description>
+    [b]This FreePBX 12 with Asterisk 13.1 - Let Freedom Ring.[/b][br]
+    FreePBX is a web-based open source GUI (graphical user interface).[br][br]
+    that controls and manages Asterisk (PBX), an open source communication server.[br][br]
+    [b][span style='color: #E80000;']Directions:[/span][/b][br]
+    [b]/config[/b] : This is where you can keep FreePBX backups.
+  </Description>
+  <Registry>https://registry.hub.docker.com/u/brownster/freepbx12021</Registry>
+  <GitHub>https://github.com/Brownster/asterisk-freepbx</GitHub>
+  <Repository>brownster/freepbx12021</Repository>
+  <BindTime>true</BindTime>
+  <Privileged>false</Privileged>
+  <Environment/>
+  <Networking>
+    <Mode>host</Mode>
+    <Publish />
+  </Networking>
+  <Data>
+    <Volume>
+      <HostDir></HostDir>
+      <ContainerDir></ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+  </Data>
+  <WebUI>http://[IP]:[PORT:8009]</WebUI>
+  <Banner>https://github.com/Brownster/asterisk-freepbx/blob/master/freepbxbanner.png</Banner>
+  <Icon>https://github.com/Brownster/asterisk-freepbx/blob/master/freepbxicon.png</Icon>
+</Container>
