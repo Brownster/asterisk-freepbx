@@ -8,7 +8,6 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV ASTERISKUSER asterisk
 ENV ASTERISKVER 13.1
 ENV FREEPBXVER 12.0.21
-ENV FREEPBXPORT 8009
 ENV ASTERISK_DB_PW pass123
 ENV AUTOBUILD_UNIXTIME 1418234402
 # Use baseimage-docker's init system.
@@ -17,7 +16,7 @@ CMD ["/sbin/my_init"]
 # Add VOLUME to allow backup of FREEPBX
 VOLUME ["/etc/freepbxbackup"]
 
-# open up ports needed  by freepbx and asterisk 5060 tcp sip reg 80 tcp web port 10000-20000 udp rtp stream  
+# open up ports needed by freepbx and asterisk 5060 tcp sip reg 80 tcp web port 10000-20000 udp rtp stream  
 EXPOSE 5060
 EXPOSE 80
 EXPOSE 8009
@@ -137,10 +136,6 @@ RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null 2>/dev/nu
   && asterisk -rx "core restart now" \
   && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf \
 
-# Attempt to change default web port from 80 to $FREEPBXPORT - currently 8009
-  && sed -i 's/Listen 80/Listen '$FREEPBXPORT'/' /etc/apache2/ports.conf \
-  && sed -i 's/<VirtualHost *: 80>/<VirtualHost *: '$FREEPBXPORT'>/' /etc/apache2/sites-enabled/000-default.conf \
-  && service apache2 restart \
 #clean up
   && find /temp -mindepth 1 -delete \
   && apt-get purge -y \
