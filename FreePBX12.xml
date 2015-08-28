@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Container>
-  <Name>FreePBX 13</Name>
+  <Category>Communication</Category>
+  <Name>FreePBX 12</Name>
   <Description>FreePBX 12 Asterisk 13.1 - Let Freedom Ring</Description>
-  <Registry>https://github.com/Brownster/asterisk-freepbx</Registry>
+  <Project>https://www.freepbx.org/</Project>
+  <Registry>https://github.com/brownster/freepbx13</Registry>
   <Repository>brownster/freepbx12021</Repository>
   <BindTime>true</BindTime>
   <Privileged>false</Privileged>
