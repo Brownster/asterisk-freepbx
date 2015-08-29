@@ -6,6 +6,12 @@ There is still the issue to resolve with freepbx on first run of the container:
 
 Issue 1, - complaining .htaccess files are disabled - more info at http://wiki.freepbx.org/display/F2/Webserver+Overrides
 
+So once you have have your freepbx docker running with:
+
+sudo docker run --name freepbx -v /place/to/put/backup:/etc/freepbxbackup --net=host -d -t brownster/freepbx12021
+
+Run the following commands starting from the docker host cmd line:
+
 sudo docker exec -it freepbx bash
 
 vi /etc/apache2/apache2.conf and hit Return / Enter.
@@ -14,11 +20,19 @@ At Directory /var/www/ you'll see a line like the following:
 
 "AllowOverride None" - change this to "AllowOverride ALL".
 
-service apache2 restart
+service apache2 start
 
-After that freepbx seems to be happy - once you have updated the modules of freepbx.
+/etc/init.d/mysql start
 
-You can find the current version at (now old):
+amportal reload
+
+After that freepbx we browse to:
+
+http://ip adress of docker host:8009/html/admin/config.php
+
+- once you have updated the modules of freepbx you are good to go.
+
+You can find the current built version at (now old):
 
 https://registry.hub.docker.com/u/brownster/freepbx12021/
 
