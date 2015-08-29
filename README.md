@@ -8,8 +8,6 @@ Issue 1, - complaining .htaccess files are disabled - more info at http://wiki.f
 
 sudo docker exec -it freepbx bash
 
-cd /etc/apache2/apache2.conf
-
 vi /etc/apache2/apache2.conf and hit Return / Enter.
 
 At Directory /var/www/ you'll see a line like the following:
