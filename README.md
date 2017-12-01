@@ -6,9 +6,24 @@ There is still the issue to resolve with freepbx on first run of the container:
 
 Issue 1, - complaining .htaccess files are disabled - more info at http://wiki.freepbx.org/display/F2/Webserver+Overrides
 
-So once you have have your freepbx docker running with:
+So once you have have your freepbx docker running with either:
 
 sudo docker run --name freepbx -v /place/to/put/backup:/etc/freepbxbackup --net=host -d -t brownster/freepbx12021
+
+or this if using unraid:
+
+sudo docker run --name freepbx \
+-v /mnt/user/appdata/freepbx/backup:/freepbx/backup \
+-v source=/mnt/user/appdata/freepbx/etc/asterisk,target=/etc/asterisk \
+-v source=/mnt/user/appdata/freepbx/etc/apache2,/etc/apache2 \
+-v source=/mnt/user/appdata/freepbx/var/www,/var/www/ \
+-v source=/mnt/user/appdata/freepbx/var/lib/mysql,/var/lib/mysql \
+-v source=/mnt/user/appdata/freepbx/var/lib/mysql/var/spool/asterisk,/var/spool/asterisk \
+-v source=/mnt/user/appdata/freepbx/var/lib/mysql/var/lib/asterisk,/var/lib/asterisk \
+-net=host -d -t brownster/freepbx12021
+
+
+
 
 Run the following commands starting from the docker host cmd line:
 
