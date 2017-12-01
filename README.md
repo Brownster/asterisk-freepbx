@@ -12,7 +12,7 @@ sudo docker run --name freepbx -v /place/to/put/backup:/etc/freepbxbackup --net=
 
 or this if using unraid:
 
-sudo docker run --name freepbx \
+"sudo docker run --name freepbx \
 -v /mnt/user/appdata/freepbx/backup:/freepbx/backup \
 -v source=/mnt/user/appdata/freepbx/etc/asterisk,target=/etc/asterisk \
 -v source=/mnt/user/appdata/freepbx/etc/apache2,/etc/apache2 \
@@ -20,7 +20,7 @@ sudo docker run --name freepbx \
 -v source=/mnt/user/appdata/freepbx/var/lib/mysql,/var/lib/mysql \
 -v source=/mnt/user/appdata/freepbx/var/lib/mysql/var/spool/asterisk,/var/spool/asterisk \
 -v source=/mnt/user/appdata/freepbx/var/lib/mysql/var/lib/asterisk,/var/lib/asterisk \
--net=host -d -t brownster/freepbx12021
+-net=host -d -t brownster/freepbx12021"
 
 
 
