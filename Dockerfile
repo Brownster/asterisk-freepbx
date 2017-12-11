@@ -17,10 +17,10 @@ CMD ["/sbin/my_init"]
 VOLUME ["/etc/freepbxbackup"]
 
 # open up ports needed by freepbx and asterisk 5060 tcp sip reg 80 tcp web port 10000-20000 udp rtp stream  
-EXPOSE 5060
-EXPOSE 80
-EXPOSE 8009
-EXPOSE 10000-20000/udp
+# EXPOSE 5060
+# EXPOSE 80
+# EXPOSE 8009
+# EXPOSE 10000-20000/udp
 
 # Add start.sh
 ADD start.sh /root/
